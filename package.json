@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "ts-node build.ts",
+    "start": "node dist/bot.js",
     "format": "prettier . --write",
     "lint": "eslint . --ext .ts,.js",
     "commitlint": "commitlint --edit",
