@@ -1,15 +1,10 @@
 import { Telegraf } from 'telegraf';
-import { config } from 'dotenv';
+import { BOT_TOKEN } from './config';
+import { help, start } from './commands';
 
-config();
+export const bot = new Telegraf(BOT_TOKEN as string);
 
-const TOKEN = process.env.TOKEN;
-
-if (!TOKEN) throw new Error('No bot token found');
-
-const bot = new Telegraf(TOKEN);
-
-bot.start((ctx) => ctx.reply('Привет!'));
-bot.command('help', (ctx) => ctx.reply('Чем могу помочь?'));
+bot.start(start);
+bot.command('help', help);
 
 bot.launch();
