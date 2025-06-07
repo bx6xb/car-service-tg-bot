@@ -10,7 +10,7 @@ export const start = async (ctx: Context) => {
 
   if (!USERS.includes(userId)) {
     try {
-      Api.addNewUser(userId);
+      await Api.addNewUser(userId);
 
       USERS.push(userId);
     } catch {
