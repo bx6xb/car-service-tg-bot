@@ -1,5 +1,5 @@
 import { Context } from 'telegraf';
-import { USERS, db } from '../db';
+import { Api, USERS } from '../api';
 
 export const start = async (ctx: Context) => {
   ctx.reply('Привет!');
@@ -10,7 +10,7 @@ export const start = async (ctx: Context) => {
 
   if (!USERS.includes(userId)) {
     try {
-      await db.query('INSERT INTO users (user_id) VALUES ($1)', [userId]);
+      Api.addNewUser(userId);
 
       USERS.push(userId);
     } catch {
