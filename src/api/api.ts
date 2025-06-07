@@ -15,4 +15,14 @@ export class Api {
 
   static addNewUser = async (userId: string) =>
     await db.query('INSERT INTO users (user_id) VALUES ($1)', [userId]);
+
+  static addUserNotification = async (userId: number, message: string, timestamp: number) =>
+    await db.query(
+      `INSERT INTO user_notifications (user_id, message, timestamp)
+       VALUES ($1, $2, $3)`,
+      [userId, message, timestamp],
+    );
+
+  static removeUserNotification = async (userId: number) =>
+    await db.query(`DELETE FROM user_notifications WHERE user_id = $1`, [userId]);
 }

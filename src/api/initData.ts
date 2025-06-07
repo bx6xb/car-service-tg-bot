@@ -1,6 +1,8 @@
 import { Api } from './api';
 import { PublicNotification, UserNotification } from './types';
 
+export const NOTIFICATIONS_QUEUE: Record<number, number[]> = {};
+
 export let USERS: string[] = [];
 export let USER_NOTIFICATIONS: UserNotification[] = [];
 export let PUBLIC_NOTIFICATIONS: PublicNotification[] = [];
@@ -16,7 +18,10 @@ export let PUBLIC_NOTIFICATIONS: PublicNotification[] = [];
     USERS = users;
     USER_NOTIFICATIONS = userNotifications;
     PUBLIC_NOTIFICATIONS = publicNotifications;
-  } catch {
+  } catch (err) {
+    console.log(err);
+    console.log('-'.repeat(100));
+
     throw new Error('Failed to fetch data');
   }
 

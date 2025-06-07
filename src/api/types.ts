@@ -1,6 +1,6 @@
 export type UserNotification = {
   id: string;
-  user_id: string;
+  user_id: number;
   message: string;
   timestamp: number;
 };
