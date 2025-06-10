@@ -1,6 +1,7 @@
 import 'dotenv/config';
-import { Pool } from 'pg';
-// import { PG_DATABASE, PG_HOST, PG_PASSWORD, PG_PORT, PG_USER } from '../config';
+import { Pool, types } from 'pg';
+
+types.setTypeParser(20, (val) => Number(val));
 
 export const db = new Pool({
   user: process.env.PG_USER,

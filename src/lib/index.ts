@@ -1,2 +1,1 @@
-export * from './notFound';
-export * from './createNotification';
+export * from './addType';
