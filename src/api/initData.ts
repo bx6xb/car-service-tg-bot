@@ -1,5 +1,5 @@
 import { bot } from '../config';
-import { addType } from '../lib';
+import { addType, logError } from '../lib';
 import { Api } from './api';
 import { AppState, UserNotification } from './types';
 
@@ -16,8 +16,6 @@ export const APP_STATE: AppState = {
       Api.fetchUserNotifications(),
     ]);
 
-    console.log(users);
-
     APP_STATE.users = users;
     APP_STATE.notifications = [
       ...publicNotifications.map(addType),
@@ -26,46 +24,35 @@ export const APP_STATE: AppState = {
 
     // interval to check notifications
     setInterval(async () => {
-      const now = new Date().getTime();
-
       const filteredNotifications = APP_STATE.notifications.filter(
-        (notif) => notif.timestamp < now,
+        (notif) => notif.timestamp < new Date().getTime(),
       );
 
       for (const notif of filteredNotifications) {
-        if (notif.type === 'user') {
-          const userNotif = notif as UserNotification;
-          bot.telegram.sendMessage(userNotif.user_id, userNotif.message);
+        try {
+          if (notif.type === 'user') {
+            const userNotif = notif as UserNotification;
 
-          try {
+            bot.telegram.sendMessage(userNotif.user_id, userNotif.message);
+
             await Api.removeUserNotification(userNotif.id);
+          } else {
+            for (let i = 0; i < APP_STATE.users.length; i++) {
+              bot.telegram.sendMessage(APP_STATE.users[i], notif.message);
+            }
 
-            APP_STATE.notifications = APP_STATE.notifications.filter(
-              (notif) => notif.id !== userNotif.id,
-            );
-          } catch {
-            console.log('Failed to delete user notification', userNotif.id);
-          }
-        } else {
-          for (let i = 0; i < APP_STATE.users.length; i++) {
-            bot.telegram.sendMessage(APP_STATE.users[i], notif.message);
-          }
-
-          try {
             await Api.removePublicNotification(notif.id);
-
-            APP_STATE.notifications = APP_STATE.notifications.filter(
-              (notif) => notif.id !== notif.id,
-            );
-          } catch {
-            console.log('Failed to delete public notification', notif.id);
           }
+        } catch (e) {
+          logError(e, `Failed to delete ${notif.type} notification`, {
+            userNotificationId: notif.id,
+          });
         }
+
+        APP_STATE.notifications = APP_STATE.notifications.filter((notif) => notif.id !== notif.id);
       }
     }, 3 * 1000);
-  } catch (err) {
-    console.log(err);
-    console.log('-'.repeat(100));
-    throw new Error('Failed to fetch data');
+  } catch (e) {
+    logError(e, 'Failed to fetch data');
   }
 })();

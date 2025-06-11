@@ -1,5 +1,6 @@
 import { Api, APP_STATE } from '../api';
 import { bot } from '../config';
+import { logError } from '../lib';
 
 bot.start(async (ctx) => {
   ctx.reply('Привет!');
@@ -11,10 +12,10 @@ bot.start(async (ctx) => {
   if (!APP_STATE.users.includes(userId)) {
     try {
       await Api.addNewUser(userId);
-
-      APP_STATE.users.push(userId);
-    } catch {
-      console.log('Failed to add user', userId);
+    } catch (e) {
+      logError(e, 'Failed to add user', { userId });
     }
+
+    APP_STATE.users.push(userId);
   }
 });
