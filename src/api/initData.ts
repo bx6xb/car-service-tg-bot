@@ -1,5 +1,5 @@
 import { bot } from '../config';
-import { addType, logError } from '../lib';
+import { addType, createUser, logError } from '../lib';
 import { Api } from './api';
 import { AppState, UserNotification } from './types';
 
@@ -16,7 +16,7 @@ export const APP_STATE: AppState = {
       Api.fetchUserNotifications(),
     ]);
 
-    APP_STATE.users = users;
+    APP_STATE.users = users.map(({ user_id, utc }) => createUser(user_id, utc));
     APP_STATE.notifications = [
       ...publicNotifications.map(addType),
       ...userNotifications.map(addType),
@@ -38,7 +38,7 @@ export const APP_STATE: AppState = {
             await Api.removeUserNotification(userNotif.id);
           } else {
             for (let i = 0; i < APP_STATE.users.length; i++) {
-              bot.telegram.sendMessage(APP_STATE.users[i], notif.message);
+              bot.telegram.sendMessage(APP_STATE.users[i].userId, notif.message);
             }
 
             await Api.removePublicNotification(notif.id);

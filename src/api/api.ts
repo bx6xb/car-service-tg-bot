@@ -1,11 +1,9 @@
 import { db } from './db';
-import { PublicNotificationResponse, UserNotificationResponse } from './types';
+import { PublicNotificationResponse, UserNotificationResponse, UsersResponse } from './types';
 
 export class Api {
-  static fetchUsers = async (): Promise<number[]> => {
-    const users = (await db.query('SELECT * FROM users')).rows as { user_id: number }[];
-    return users.map((user) => user.user_id);
-  };
+  static fetchUsers = async (): Promise<UsersResponse> =>
+    (await db.query('SELECT * FROM users')).rows as UsersResponse;
 
   static fetchUserNotifications = async (): Promise<UserNotificationResponse[]> =>
     (await db.query('SELECT * FROM user_notifications')).rows as UserNotificationResponse[];
@@ -15,6 +13,9 @@ export class Api {
 
   static addNewUser = async (userId: number) =>
     await db.query('INSERT INTO users (user_id) VALUES ($1)', [userId]);
+
+  static addUserUTC = async (userId: number, utc: number) =>
+    await db.query('UPDATE users SET utc = $1 WHERE user_id = $2', [utc, userId]);
 
   static addPublicNotification = async (
     message: string,
