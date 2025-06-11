@@ -1,18 +1,12 @@
 import { Context } from 'telegraf';
 import { Api, APP_STATE } from '../api';
 import { addType } from './addType';
+import { ADMIN_IDS } from '../config';
 
 export const createNotification = async (ctx: Context, notificationType: 'user' | 'public') => {
   if (!ctx.message || !('text' in ctx.message)) return;
 
-  const adminIdsString = process.env.ADMIN_IDS;
-
-  if (
-    notificationType === 'public' &&
-    adminIdsString &&
-    !adminIdsString.split(',').includes(String(ctx.chat!.id))
-  )
-    return;
+  if (notificationType === 'public' && !ADMIN_IDS.includes(ctx.chat!.id)) return;
 
   const splittedText = ctx.message.text.split(' ');
 

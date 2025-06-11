@@ -1,5 +1,5 @@
 import { Api, APP_STATE } from '../api';
-import { bot } from '..';
+import { bot } from '../config';
 
 bot.start(async (ctx) => {
   ctx.reply('Привет!');

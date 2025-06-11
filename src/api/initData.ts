@@ -1,4 +1,4 @@
-import { bot } from '..';
+import { bot } from '../config';
 import { addType } from '../lib';
 import { Api } from './api';
 import { AppState, UserNotification } from './types';
@@ -15,6 +15,8 @@ export const APP_STATE: AppState = {
       Api.fetchPublicNotifications(),
       Api.fetchUserNotifications(),
     ]);
+
+    console.log(users);
 
     APP_STATE.users = users;
     APP_STATE.notifications = [
