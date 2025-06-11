@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { Pool, types } from 'pg';
 
 types.setTypeParser(20, (val) => Number(val));

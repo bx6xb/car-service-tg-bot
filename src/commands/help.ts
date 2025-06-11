@@ -1,3 +1,3 @@
-import { Context } from 'telegraf';
+import { bot } from '..';
 
-export const help = (ctx: Context) => ctx.reply('Чем могу помочь?');
+bot.command('help', (ctx) => ctx.reply('Чем могу помочь?'));

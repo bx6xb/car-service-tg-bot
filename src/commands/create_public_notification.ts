@@ -1,4 +1,4 @@
-import { Context } from 'telegraf';
 import { createNotification } from '../lib';
+import { bot } from '..';
 
-export const createPublicNotification = async (ctx: Context) => createNotification(ctx, 'public');
+bot.command('create_public_notification', (ctx) => createNotification(ctx, 'public'));

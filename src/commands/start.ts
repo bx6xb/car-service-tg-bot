@@ -1,7 +1,7 @@
-import { Context } from 'telegraf';
 import { Api, APP_STATE } from '../api';
+import { bot } from '..';
 
-export const start = async (ctx: Context) => {
+bot.start(async (ctx) => {
   ctx.reply('Привет!');
 
   if (!ctx.chat) return;
@@ -17,4 +17,4 @@ export const start = async (ctx: Context) => {
       console.log('Failed to add user', userId);
     }
   }
-};
+});
