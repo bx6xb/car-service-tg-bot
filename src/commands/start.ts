@@ -1,6 +1,6 @@
 import { Api, APP_STATE } from '../api';
 import { bot } from '../config';
-import { createUser, logError, setUserState } from '../lib';
+import { createUser, logError } from '../lib';
 
 bot.start(async (ctx) => {
   ctx.reply('Привет! Этот');
@@ -19,6 +19,5 @@ bot.start(async (ctx) => {
     }
 
     APP_STATE.users.push(createUser(userId));
-    setUserState(userId, 'set_date');
   }
 });
