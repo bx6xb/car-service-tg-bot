@@ -8,6 +8,7 @@
     "build": "ts-node build.ts",
     "start": "node dist/bot.js",
     "format": "prettier . --write",
+    "types": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.js",
     "commitlint": "commitlint --edit",
     "prepare": "husky"
