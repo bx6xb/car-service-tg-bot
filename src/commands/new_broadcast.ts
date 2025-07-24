@@ -4,11 +4,11 @@ import { BroadcastAPI } from '../api';
 import { logError } from '../lib';
 
 type Step = 'message' | 'date' | 'time';
-interface UserStep {
+type UserStep = {
   step: Step;
   messageText?: string;
   date?: string;
-}
+};
 
 const userSteps = new Map<number, UserStep>();
 
@@ -78,7 +78,7 @@ bot.on('text', async (ctx) => {
     const timestamp = new Date(isoString).getTime();
 
     try {
-      await BroadcastAPI.createBroadcast(userStep.messageText, timestamp - 10000);
+      await BroadcastAPI.createBroadcast(userStep.messageText, timestamp);
     } catch (e) {
       logError(e, 'Failed to add new broadcast');
     }
