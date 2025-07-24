@@ -1,6 +1,6 @@
 import { Markup } from 'telegraf';
 import { ADMIN_IDS, bot } from '../config';
-import { BroadcastAPI } from '../api/broadcast';
+import { BroadcastAPI } from '../api';
 import { logError } from '../lib';
 
 type Step = 'message' | 'date' | 'time';
