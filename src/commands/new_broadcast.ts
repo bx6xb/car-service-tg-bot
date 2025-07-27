@@ -1,7 +1,8 @@
 import { Markup } from 'telegraf';
-import { ADMIN_IDS, bot } from '../config';
+import { bot } from '../config';
 import { BroadcastAPI } from '../api';
 import { logError } from '../lib';
+import { adminMiddleware } from '../middlewares/admin';
 
 type Step = 'message' | 'date' | 'time';
 type UserStep = {
@@ -12,18 +13,15 @@ type UserStep = {
 
 const userSteps = new Map<number, UserStep>();
 
-bot.command('new_broadcast', async (ctx) => {
+bot.command('new_broadcast', adminMiddleware, async (ctx) => {
   const userId = ctx.from?.id;
-
-  if (!userId || !ADMIN_IDS.includes(userId)) return;
 
   userSteps.set(userId, { step: 'message' });
   await ctx.reply('Введите текст рассылки', Markup.removeKeyboard());
 });
 
-bot.on('text', async (ctx) => {
+bot.on('text', adminMiddleware, async (ctx) => {
   const userId = ctx.from?.id;
-  if (!userId || !ADMIN_IDS.includes(userId)) return;
 
   const userStep = userSteps.get(userId);
   const text = ctx.message.text;

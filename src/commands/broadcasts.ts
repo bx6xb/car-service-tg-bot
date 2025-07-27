@@ -1,14 +1,11 @@
 import { BroadcastAPI } from '../api';
-import { ADMIN_IDS, bot } from '../config';
+import { bot } from '../config';
 import { formatDate, logError } from '../lib';
+import { adminMiddleware } from '../middlewares/admin';
 
 const userSteps = new Map<number, Record<string, number>>();
 
-bot.command('broadcasts', async (ctx) => {
-  const userId = ctx.from?.id;
-
-  if (!userId || !ADMIN_IDS.includes(userId)) return;
-
+bot.command('broadcasts', adminMiddleware, async (ctx) => {
   try {
     const broadcasts = await BroadcastAPI.getBroadcasts();
 
@@ -29,6 +26,7 @@ bot.command('broadcasts', async (ctx) => {
       string += `${i + 1}. ${b.message}\n${formatDate(b.scheduled_at)}\n\n`;
     }
 
+    const userId = ctx.from?.id;
     userSteps.set(userId, obj);
 
     await ctx.reply(`${string}Напишите номер рассылки для удаления`);
@@ -38,10 +36,10 @@ bot.command('broadcasts', async (ctx) => {
   }
 });
 
-bot.on('text', async (ctx) => {
+bot.on('text', adminMiddleware, async (ctx) => {
   const userId = ctx.from?.id;
 
-  if (!userId || !ADMIN_IDS.includes(userId) || !userSteps.has(userId)) return;
+  if (!userSteps.has(userId)) return;
 
   const broadcastNumber = ctx.message.text;
   const broadcasts = userSteps.get(userId);
