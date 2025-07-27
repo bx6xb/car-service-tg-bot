@@ -79,31 +79,29 @@ bot.on('text', adminMiddleware, async (ctx) => {
   }
 
   if (userState === 'broadcasts') {
-    bot.on('text', adminMiddleware, async (ctx) => {
-      const userId = ctx.from?.id;
+    const userId = ctx.from?.id;
 
-      if (!broadcastsSteps.has(userId)) return;
+    if (!broadcastsSteps.has(userId)) return;
 
-      const broadcastNumber = ctx.message.text;
-      const broadcasts = broadcastsSteps.get(userId);
+    const broadcastNumber = ctx.message.text;
+    const broadcasts = broadcastsSteps.get(userId);
 
-      if (!broadcasts) return;
+    if (!broadcasts) return;
 
-      if (!(broadcastNumber in broadcasts)) {
-        await ctx.reply('Рассылки с таким номером нет, введите корректный номер');
-        return;
-      }
+    if (!(broadcastNumber in broadcasts)) {
+      await ctx.reply('Рассылки с таким номером нет, введите корректный номер');
+      return;
+    }
 
-      try {
-        await BroadcastAPI.removeBroadcast(broadcasts[broadcastNumber]);
+    try {
+      await BroadcastAPI.removeBroadcast(broadcasts[broadcastNumber]);
 
-        textState.delete(userId);
-        broadcastsSteps.delete(userId);
-        await ctx.reply('Рассылка успешно удалена');
-      } catch (e) {
-        await ctx.reply('Произошла ошибка при удалении рассылки, введите номер ещё раз');
-        logError(e, 'Failed to remove broadcast');
-      }
-    });
+      textState.delete(userId);
+      broadcastsSteps.delete(userId);
+      await ctx.reply('Рассылка успешно удалена');
+    } catch (e) {
+      await ctx.reply('Произошла ошибка при удалении рассылки, введите номер ещё раз');
+      logError(e, 'Failed to remove broadcast');
+    }
   }
 });
