@@ -2,7 +2,7 @@ import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { BroadcastAPI } from '../api';
 import { logError } from '../lib';
-import { adminMiddleware } from '../middlewares/admin';
+import { adminMiddleware } from '../middlewares';
 
 type Step = 'message' | 'date' | 'time';
 type UserStep = {

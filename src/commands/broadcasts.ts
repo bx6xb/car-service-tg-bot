@@ -1,7 +1,7 @@
 import { BroadcastAPI } from '../api';
 import { bot } from '../config';
 import { formatDate, logError } from '../lib';
-import { adminMiddleware } from '../middlewares/admin';
+import { adminMiddleware } from '../middlewares';
 
 const userSteps = new Map<number, Record<string, number>>();
 
