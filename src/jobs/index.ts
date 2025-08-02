@@ -12,7 +12,9 @@ export const sendBroadcasts = async () => {
     if (b.scheduled_at - 1000 <= new Date().getTime()) {
       try {
         for (const user of users) {
-          await bot.telegram.sendMessage(user.user_id, b.message);
+          await bot.telegram.sendMessage(user.user_id, b.message, {
+            disable_notification: true,
+          });
         }
 
         await BroadcastAPI.removeBroadcast(b.id);
