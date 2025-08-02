@@ -1,4 +1,5 @@
-import { Broadcast, db } from './index';
+import { db } from './db';
+import { Broadcast } from './types';
 
 export class BroadcastAPI {
   static createBroadcast = async (message: string, scheduled_at: number): Promise<void> => {
@@ -19,4 +20,4 @@ export class BroadcastAPI {
   };
 }
 
-BroadcastAPI.getBroadcasts().then(console.log);
+// BroadcastAPI.getBroadcasts().then(console.log);
