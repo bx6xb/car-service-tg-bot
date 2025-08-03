@@ -10,18 +10,18 @@ const notificationsMenu = () =>
     [Markup.button.callback('🔔 Включить уведомления', 'action-enable')],
     [Markup.button.callback('🔕 Отключить до следующего ТО', 'action-pause')],
     [Markup.button.callback('🧹 Сбросить гарантию', 'action-disable')],
-    [Markup.button.callback('Вернуться назад', 'back')],
+    [Markup.button.callback('↩️ Назад', 'back')],
   ]);
 
 const goBackMenu = () =>
-  Markup.inlineKeyboard([[Markup.button.callback('Вернуться назад', 'back')]]);
+  Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', 'back')]]);
 
 const warrantiesMenu = (warranties: Warranty[], action: Action) =>
   Markup.inlineKeyboard([
     ...warranties.map((w) => [
       Markup.button.callback(`🔋 ${w.battery_name}`, `warranty-${action}-${w.id}`),
     ]),
-    [Markup.button.callback('Вернуться назад', 'back')],
+    [Markup.button.callback('↩️ Назад', 'back')],
   ]);
 
 bot.command('toggle_warranty', async (ctx) => {
@@ -41,7 +41,7 @@ bot.on('callback_query', async (ctx) => {
   if (data.startsWith('action-')) {
     const action = data.split('-')[1] as Action;
 
-    await ctx.editMessageText('⏳ Гарантии загружаются...');
+    await ctx.editMessageText('⏳ Загружаем гарантии...');
 
     try {
       const warranties = await WarrantyApi.getUserWarranties(userId);
