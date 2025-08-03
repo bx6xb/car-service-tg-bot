@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { Warranty, WarrantyApi } from '../api';
-import { logError, msDays } from '../lib';
+import { escapeMarkdownV2, logError, msDays } from '../lib';
 
 type Action = 'enable' | 'pause' | 'disable';
 
@@ -13,8 +13,7 @@ const notificationsMenu = () =>
     [Markup.button.callback('↩️ Назад', 'back')],
   ]);
 
-const goBackMenu = () =>
-  Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', 'back')]]);
+const goBackMenu = () => Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', 'back')]]);
 
 const warrantiesMenu = (warranties: Warranty[], action: Action) =>
   Markup.inlineKeyboard([
@@ -72,10 +71,15 @@ bot.on('callback_query', async (ctx) => {
     if (action === 'enable') {
       try {
         await WarrantyApi.enableWarranty(warrantyId, userId);
-        return await ctx.editMessageText(
-          'Уведомления включены для выбранной гарантии.',
-          goBackMenu(),
-        );
+
+        const text = `🔔 *Уведомления включены*
+Напоминания о техническом осмотре для выбранного аккумулятора активны.
+Мы напомним вам заранее, чтобы сохранить расширенную гарантию!`;
+
+        return await ctx.editMessageText(escapeMarkdownV2(text), {
+          parse_mode: 'MarkdownV2',
+          reply_markup: goBackMenu().reply_markup,
+        });
       } catch (e) {
         logError(e, 'Failed to enable warranty', { warrantyId, userId });
         return await ctx.editMessageText(
@@ -103,10 +107,15 @@ bot.on('callback_query', async (ctx) => {
 
       try {
         await WarrantyApi.pauseWarranty(nextTODate, warrantyId, userId);
-        return await ctx.editMessageText(
-          'Уведомления приостановлены до следующего ТО для выбранной гарантии.',
-          goBackMenu(),
-        );
+
+        const text = `🔕 *Уведомления отключены до следующего ТО*
+Напоминания приостановлены, для выбранного АКБ
+Следующее уведомление придёт за 20 дней до следующего планового осмотра.`;
+
+        return await ctx.editMessageText(escapeMarkdownV2(text), {
+          parse_mode: 'MarkdownV2',
+          reply_markup: goBackMenu().reply_markup,
+        });
       } catch (e) {
         logError(e, 'Failed to pause warranty', { warrantyId, userId });
         return await ctx.editMessageText(
@@ -119,10 +128,16 @@ bot.on('callback_query', async (ctx) => {
     if (action === 'disable') {
       try {
         await WarrantyApi.removeWarranty(warrantyId);
-        return await ctx.editMessageText(
-          'Уведомления отключены навсегда для выбранной гарантии.',
-          goBackMenu(),
-        );
+
+        const text = `🚫 *Уведомления отключены навсегда*
+Напоминания по этому аккумулятору отключены.
+Вы всегда можете включить их снова через главное меню бота.
+Мы остаёмся на связи — если что, пишите! ⚡️`;
+
+        return await ctx.editMessageText(escapeMarkdownV2(text), {
+          parse_mode: 'MarkdownV2',
+          reply_markup: goBackMenu().reply_markup,
+        });
       } catch (e) {
         logError(e, 'Failed to remove warranty', { warrantyId, userId });
         return await ctx.editMessageText(
