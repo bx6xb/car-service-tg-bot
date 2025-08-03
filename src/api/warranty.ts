@@ -28,17 +28,20 @@ export class WarrantyApi {
     return dates.rows[0];
   };
 
-  static createWarranty = async (
-    userId: number,
-    batteryName: string,
-    duration: number,
-  ): Promise<void> => {
-    const startDate = new Date().setHours(0, 0, 0, 0);
-    const createdAt = Date.now();
-
+  static createWarranty = async ({
+    userId,
+    batteryName,
+    startDate,
+    duration,
+  }: {
+    userId: number;
+    batteryName: string;
+    duration: number;
+    startDate: number;
+  }): Promise<void> => {
     await db.query(
-      `INSERT INTO warranty_reminders (user_id, battery_name, start_date, duration_months, created_at) VALUES ($1, $2, $3, $4, $5)`,
-      [userId, batteryName, startDate, duration, createdAt],
+      `INSERT INTO warranty_reminders (user_id, battery_name, start_date, duration_months) VALUES ($1, $2, $3, $4)`,
+      [userId, batteryName, startDate, duration],
     );
   };
 

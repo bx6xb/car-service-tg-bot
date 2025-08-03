@@ -1,6 +1,6 @@
 import { WarrantyApi } from '../api';
 import { bot } from '../config';
-import { logError, sendTempMessage } from '../lib';
+import { escapeMarkdownV2, formatDate, logError, msDays, sendTempMessage } from '../lib';
 
 bot.command('create_warranty', async (ctx) => {
   const args = ctx.message.text.split(' ').slice(1);
@@ -32,9 +32,26 @@ bot.command('create_warranty', async (ctx) => {
   const userId = ctx.from.id;
 
   try {
-    await WarrantyApi.createWarranty(userId, batteryName, duration);
+    const startDate = new Date().setHours(0, 0, 0, 0);
+    const formattedStartDate = formatDate(startDate, false);
+    const nextServiceDate = formatDate(startDate + msDays(90), false);
 
-    sendTempMessage({ ctx, text: `Гарантия для «${batteryName}» успешно создана.` });
+    await WarrantyApi.createWarranty({ userId, batteryName, duration, startDate });
+
+    const text = `✅ *Гарантия успешно создана!*
+
+🔋 Аккумулятор: *«${batteryName}»*
+📅 Дата покупки: *${formattedStartDate}*
+⏰ Срок гарантии: *${duration}*
+🔧 Ближайшее ТО: *${nextServiceDate}*
+
+Мы пришлем вам уведомление:
+⏰ За *20 дней* и за *10 дней* до ТО,
+чтобы вы не пропустили обслуживание и сохранили расширенную гарантию.
+
+Спасибо, что выбрали *«Ампер»*! ⚡️`;
+
+    ctx.reply(escapeMarkdownV2(text), { parse_mode: 'MarkdownV2' });
   } catch (e) {
     sendTempMessage({ ctx, text: 'Не удалось создать гарантию' });
 

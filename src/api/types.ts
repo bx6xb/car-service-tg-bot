@@ -15,5 +15,4 @@ export type Warranty = {
   start_date: number;
   duration_months: number;
   notifications_paused_until: number | null;
-  created_at: number;
 };

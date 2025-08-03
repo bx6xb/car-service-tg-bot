@@ -1,4 +1,4 @@
-export const formatDate = (ms: number): string => {
+export const formatDate = (ms: number, withTime = true): string => {
   const date = new Date(ms);
 
   const hours = String(date.getHours()).padStart(2, '0');
@@ -7,5 +7,7 @@ export const formatDate = (ms: number): string => {
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы с 0
   const year = date.getFullYear();
 
-  return `${hours}:${minutes} ${day}.${month}.${year}`;
+  const time = withTime ? `${hours}:${minutes} ` : ''
+
+  return time + `${day}.${month}.${year}`;
 };
