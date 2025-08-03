@@ -31,7 +31,7 @@ bot.command('broadcasts', adminMiddleware, async (ctx) => {
 
     await ctx.reply(`${string}Напишите номер рассылки для удаления`);
   } catch (e) {
-    await ctx.reply('Произошла ошибка при загружке данных');
+    await ctx.reply('❌ Произошла ошибка при загружке данных');
     logError(e, 'Failed to get broadcasts');
   }
 });

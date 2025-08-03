@@ -9,7 +9,7 @@ bot.command('create_warranty', async (ctx) => {
     sendTempMessage({ ctx, ms: 4000 });
     return sendTempMessage({
       ctx,
-      text: 'Неверный формат. Пример\n/команда аккумулятор для гелика 24',
+      text: '❌ Неверный формат. Пример\n/команда аккумулятор для гелика 24',
     });
   }
 
@@ -19,14 +19,14 @@ bot.command('create_warranty', async (ctx) => {
 
   if (!match) {
     sendTempMessage({ ctx, ms: 4000 });
-    return sendTempMessage({ ctx, text: 'Срок гарантии неправильно указан' });
+    return sendTempMessage({ ctx, text: '❌ Срок гарантии неправильно указан' });
   }
 
   const duration = +match[0];
 
   if (![18, 24, 36, 48].includes(duration)) {
     sendTempMessage({ ctx, ms: 4000 });
-    return sendTempMessage({ ctx, text: 'Срок гарантии должен быть 18/24/36/48 мес' });
+    return sendTempMessage({ ctx, text: '❌ Срок гарантии должен быть 18/24/36/48 мес' });
   }
 
   const userId = ctx.from.id;
@@ -53,8 +53,7 @@ bot.command('create_warranty', async (ctx) => {
 
     await ctx.reply(escapeMarkdownV2(text), { parse_mode: 'MarkdownV2' });
   } catch (e) {
-    sendTempMessage({ ctx, text: 'Не удалось создать гарантию' });
-
+    sendTempMessage({ ctx, text: '❌ Не удалось создать гарантию' });
     logError(e, 'Failed to create warranty', {
       userId,
       batteryName,

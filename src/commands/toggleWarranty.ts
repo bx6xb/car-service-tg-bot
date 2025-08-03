@@ -60,7 +60,7 @@ bot.on('callback_query', async (ctx) => {
       return await ctx.editMessageText(text, warrantiesMenu(warranties, action));
     } catch (e) {
       logError(e, 'Failed to fetch warranties');
-      return await ctx.editMessageText('Произошла ошибка при загрузке гарантий', goBackMenu());
+      return await ctx.editMessageText('❌ Произошла ошибка при загрузке гарантий', goBackMenu());
     }
   }
 
@@ -79,7 +79,7 @@ bot.on('callback_query', async (ctx) => {
       } catch (e) {
         logError(e, 'Failed to enable warranty', { warrantyId, userId });
         return await ctx.editMessageText(
-          'Произошла ошибка при включении уведомлений',
+          '❌ Произошла ошибка при включении уведомления',
           goBackMenu(),
         );
       }
@@ -88,7 +88,7 @@ bot.on('callback_query', async (ctx) => {
     if (action === 'pause') {
       const date = await WarrantyApi.getUserStartDate(warrantyId, userId);
 
-      if (!date) return await ctx.editMessageText('Гарантия не найдена', goBackMenu());
+      if (!date) return await ctx.editMessageText('❌ Гарантия не найдена', goBackMenu());
 
       const startDate = Number(date.start_date);
       const now = Date.now();
@@ -110,7 +110,7 @@ bot.on('callback_query', async (ctx) => {
       } catch (e) {
         logError(e, 'Failed to pause warranty', { warrantyId, userId });
         return await ctx.editMessageText(
-          'Произошла ошибка при отключении уведомлений',
+          '❌ Произошла ошибка при отключении уведомления',
           goBackMenu(),
         );
       }
@@ -126,12 +126,12 @@ bot.on('callback_query', async (ctx) => {
       } catch (e) {
         logError(e, 'Failed to remove warranty', { warrantyId, userId });
         return await ctx.editMessageText(
-          'Произошла ошибка при отключении уведомлений',
+          '❌ Произошла ошибка при отключении уведомления',
           goBackMenu(),
         );
       }
     }
   }
 
-  return await ctx.editMessageText('Неверная команда.', goBackMenu());
+  return await ctx.editMessageText('❌ Неверная команда', goBackMenu());
 });

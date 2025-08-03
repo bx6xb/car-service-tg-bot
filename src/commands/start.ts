@@ -1,6 +1,6 @@
 import { UserApi } from '../api';
 import { bot } from '../config';
-import { logError } from '../lib';
+import { logError, notifyAdmins } from '../lib';
 
 bot.start(async (ctx) => {
   await ctx.reply('Привет! Этот');
@@ -11,5 +11,8 @@ bot.start(async (ctx) => {
     await UserApi.addUser(id, username);
   } catch (e) {
     logError(e, 'Failed to add user');
+    notifyAdmins(
+      `❌ Не удалось добавить нового пользователя ${username ? `@${username} ` : ''}id ${id}`,
+    );
   }
 });

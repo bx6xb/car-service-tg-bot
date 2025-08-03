@@ -1,5 +1,6 @@
 export type User = {
   user_id: number;
+  username: string | null;
 };
 
 export type Broadcast = {

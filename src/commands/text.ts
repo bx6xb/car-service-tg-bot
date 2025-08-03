@@ -26,7 +26,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
     if (userStep?.step === 'date') {
       const match = text.match(/^(\d{1,2})\.(\d{1,2}).(\d{4})$/);
       if (!match) {
-        await ctx.reply('Введите корректную дату в формате ДД.ММ.ГГГГ');
+        await ctx.reply('❌ Введите корректную дату в формате ДД.ММ.ГГГГ');
         return;
       }
 
@@ -49,7 +49,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
 
     if (userStep?.step === 'time') {
       if (text !== '09:00' && text !== '17:00') {
-        await ctx.reply('Выберите только 09:00 или 17:00');
+        await ctx.reply('❌ Выберите только 09:00 или 17:00');
         return;
       }
 
@@ -66,6 +66,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
         await BroadcastAPI.createBroadcast(userStep.messageText, timestamp);
       } catch (e) {
         logError(e, 'Failed to add new broadcast');
+        return await ctx.reply('❌ Произошла ошибка при создании рассылки');
       }
 
       await ctx.reply(`Рассылка запланирована на ${text} по МСК`, Markup.removeKeyboard());
@@ -89,7 +90,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
     if (!broadcasts) return;
 
     if (!(broadcastNumber in broadcasts)) {
-      await ctx.reply('Рассылки с таким номером нет, введите корректный номер');
+      await ctx.reply('❌ Рассылки с таким номером нет, введите корректный номер');
       return;
     }
 
@@ -100,8 +101,8 @@ bot.on('text', adminMiddleware, async (ctx) => {
       broadcastsSteps.delete(userId);
       await ctx.reply('Рассылка успешно удалена');
     } catch (e) {
-      await ctx.reply('Произошла ошибка при удалении рассылки, введите номер ещё раз');
       logError(e, 'Failed to remove broadcast');
+      return await ctx.reply('❌ Произошла ошибка при удалении рассылки, введите номер ещё раз');
     }
   }
 });
