@@ -1,6 +1,6 @@
 import { BroadcastApi, UserApi } from '../api';
 import { bot } from '../config';
-import { logError, notifyAdmins } from '../lib';
+import { escapeMarkdownV2, logError, notifyAdmins } from '../lib';
 
 export const sendBroadcasts = async () => {
   const users = await UserApi.fetchUsers();
@@ -21,7 +21,8 @@ export const sendBroadcasts = async () => {
         const { username, user_id: id } = user;
 
         try {
-          await bot.telegram.sendMessage(id, b.message, {
+          await bot.telegram.sendMessage(id, escapeMarkdownV2(b.message), {
+            parse_mode: 'MarkdownV2',
             disable_notification: true,
           });
         } catch (e) {
