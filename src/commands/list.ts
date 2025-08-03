@@ -1,48 +1,55 @@
-import { Context, Markup, Telegraf } from 'telegraf';
+import { Context, Markup } from 'telegraf';
+import { bot } from '..';
 
-// Главное меню
-const showMainMenu = async (ctx: Context) => {
-  await ctx.editMessageText('📋 Главное меню:', {
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
-      [Markup.button.callback('🔋 Всё про АКБ', 'menu_akb'), Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
-      [Markup.button.callback('📅 ТО и Гарантия', 'service'), Markup.button.callback('🛠 Частые вопросы', 'faq')],
-      [Markup.button.callback('🎁 Акции и скидки', 'promotions')],
-    ])
-  });
-};
+const backToMenu = (text: string) =>
+  Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', text)]]);
 
 // Меню "ТО и Гарантия"
 export const showWarrantyMenu = async (ctx: Context) => {
-  await ctx.editMessageText(
-    '📅 <b>ТО и Гарантия</b>',
-    {
-      parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('📆 Когда следующее ТО?', 'warranty_next')],
-        [Markup.button.callback('🛡️ Как работает расширенная гарантия', 'warranty_how')],
-        [Markup.button.callback('📌 Что будет, если пропустить', 'warranty_skip')],
-        [Markup.button.callback('🔔 Отключить/включить напоминания', 'warranty_notify')],
-        [Markup.button.callback('📃 Условия и детали гарантии', 'warranty_details')],
-        [Markup.button.callback('↩️ Назад', 'back_to_main')],
-      ]),
-    }
-  )
-}
+  await ctx.editMessageText('📅 <b>ТО и Гарантия</b>', {
+    parse_mode: 'HTML',
+    ...Markup.inlineKeyboard([
+      [Markup.button.callback('📆 Когда следующее ТО?', 'warranty_next')],
+      [Markup.button.callback('🛡️ Как работает расширенная гарантия', 'warranty_how')],
+      [Markup.button.callback('📌 Что будет, если пропустить', 'warranty_skip')],
+      [Markup.button.callback('🔔 Отключить/включить напоминания', 'warranty_notify')],
+      [Markup.button.callback('📃 Условия и детали гарантии', 'warranty_details')],
+      [Markup.button.callback('↩️ Назад', 'back_to_main')],
+    ]),
+  });
+};
 
 // Меню АКБ
 const showAkbMenu = async (ctx: Context) => {
   await ctx.editMessageText('🔋 Всё про АКБ:', {
     parse_mode: 'HTML',
     ...Markup.inlineKeyboard([
-      [Markup.button.callback('🔧 Неисправности', 'faults'), Markup.button.callback('📋 Правила эксплуатации', 'rules')],
-      [Markup.button.callback('🔍 Проверка состояния', 'check'), Markup.button.callback('⚡️ Зарядка', 'charging')],
-      [Markup.button.callback('🔄 Замена', 'replacement'), Markup.button.callback('❄️☀️ Температура', 'temperature')],
-      [Markup.button.callback('🔌 Нагрузки', 'load'), Markup.button.callback('✅ Качество', 'quality')],
-      [Markup.button.callback('⚙️ Совместимость', 'compatibility'), Markup.button.callback('🌡️ Подготовка', 'season')],
-      [Markup.button.callback('📦 Хранение', 'storage'), Markup.button.callback('⚖️ Сравнение', 'compare')],
+      [
+        Markup.button.callback('🔧 Неисправности', 'faults'),
+        Markup.button.callback('📋 Правила эксплуатации', 'rules'),
+      ],
+      [
+        Markup.button.callback('🔍 Проверка состояния', 'check'),
+        Markup.button.callback('⚡️ Зарядка', 'charging'),
+      ],
+      [
+        Markup.button.callback('🔄 Замена', 'replacement'),
+        Markup.button.callback('❄️☀️ Температура', 'temperature'),
+      ],
+      [
+        Markup.button.callback('🔌 Нагрузки', 'load'),
+        Markup.button.callback('✅ Качество', 'quality'),
+      ],
+      [
+        Markup.button.callback('⚙️ Совместимость', 'compatibility'),
+        Markup.button.callback('🌡️ Подготовка', 'season'),
+      ],
+      [
+        Markup.button.callback('📦 Хранение', 'storage'),
+        Markup.button.callback('⚖️ Сравнение', 'compare'),
+      ],
       [Markup.button.callback('↩️ Назад', 'menu_main')],
-    ])
+    ]),
   });
 };
 
@@ -55,7 +62,7 @@ const showContactMenu = async (ctx: Context) => {
       [Markup.button.callback('📞 Позвонить', 'contact_call')],
       [Markup.button.callback('💬 Написать менеджеру', 'contact_chat')],
       [Markup.button.callback('↩️ Назад', 'menu_main')],
-    ])
+    ]),
   });
 };
 
@@ -89,10 +96,8 @@ const showPromotions = async (ctx: Context) => {
 📌 Подробнее — <a href="https://t.me/yanamper">связаться с админом</a>`,
     {
       parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('↩️ Назад', 'menu_main')],
-      ]),
-    }
+      ...backToMenu('menu_main'),
+    },
   );
 };
 
@@ -550,79 +555,89 @@ const contactReplies: Record<string, string> = {
   contact_chat: `💬 Напишите нам — живой человек обязательно поможет 🙃\n@yanamper`,
 };
 
-// Обработчики
-export const setupButtonHandlers = (bot: Telegraf<Context>) => {
-  bot.hears('📋 Меню', async (ctx) => {
-    await ctx.reply('📋 Главное меню:', {
+bot.hears('📋 Меню', async (ctx) => {
+  await ctx.reply('📋 Главное меню:', {
+    parse_mode: 'HTML',
+    ...Markup.inlineKeyboard([
+      [Markup.button.callback('🔋 Всё про АКБ', 'menu_akb')],
+      [Markup.button.callback('🎁 Акции и скидки', 'promotions')],
+      [Markup.button.callback('📅 ТО и Гарантия', 'service')],
+      [Markup.button.callback('🛠 Частые вопросы', 'faq')],
+      [Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
+    ]),
+  });
+});
+
+// Меню
+bot.action('menu_main', async (ctx) => {
+  await ctx.answerCbQuery();
+
+  await ctx.editMessageText('📋 Главное меню:', {
+    parse_mode: 'HTML',
+    ...Markup.inlineKeyboard([
+      [
+        Markup.button.callback('🔋 Всё про АКБ', 'menu_akb'),
+        Markup.button.callback('📞 Связаться с нами', 'menu_contact'),
+      ],
+      [
+        Markup.button.callback('📅 ТО и Гарантия', 'service'),
+        Markup.button.callback('🛠 Частые вопросы', 'faq'),
+      ],
+      [Markup.button.callback('🎁 Акции и скидки', 'promotions')],
+    ]),
+  });
+});
+
+bot.action('menu_akb', async (ctx) => {
+  await ctx.answerCbQuery();
+  await showAkbMenu(ctx);
+});
+
+bot.action('menu_contact', async (ctx) => {
+  await ctx.answerCbQuery();
+  await showContactMenu(ctx);
+});
+
+// Ответы — АКБ
+for (const [key, message] of Object.entries(akbReplies)) {
+  bot.action(key, async (ctx) => {
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(message, {
       parse_mode: 'HTML',
       ...Markup.inlineKeyboard([
-        [Markup.button.callback('🔋 Всё про АКБ', 'menu_akb')],
-        [Markup.button.callback('🎁 Акции и скидки', 'promotions')],
-        [Markup.button.callback('📅 ТО и Гарантия', 'service')],
-        [Markup.button.callback('🛠 Частые вопросы', 'faq')],
-        [Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
-      ])
+        [Markup.button.callback('↩️ Назад', 'menu_akb')],
+        [Markup.button.callback('🏠 Главное меню', 'menu_main')],
+      ]),
     });
   });
+}
 
-  // Меню
-  bot.action('menu_main', async (ctx) => {
+// Ответы — Контакты
+for (const [key, message] of Object.entries(contactReplies)) {
+  bot.action(key, async (ctx) => {
     await ctx.answerCbQuery();
-    await showMainMenu(ctx);
-  });
-
-  bot.action('menu_akb', async (ctx) => {
-    await ctx.answerCbQuery();
-    await showAkbMenu(ctx);
-  });
-
-  bot.action('menu_contact', async (ctx) => {
-    await ctx.answerCbQuery();
-    await showContactMenu(ctx);
-  });
-
-  // Ответы — АКБ
-  for (const [key, message] of Object.entries(akbReplies)) {
-    bot.action(key, async (ctx) => {
-      await ctx.answerCbQuery();
-      await ctx.editMessageText(message, {
-        parse_mode: 'HTML',
-        ...Markup.inlineKeyboard([
-          [Markup.button.callback('↩️ Назад', 'menu_akb')],
-          [Markup.button.callback('🏠 Главное меню', 'menu_main')],
-        ])
-      });
+    await ctx.editMessageText(message, {
+      parse_mode: 'HTML',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback('↩️ Назад', 'menu_contact')],
+        [Markup.button.callback('🏠 Главное меню', 'menu_main')],
+      ]),
     });
-  }
-
-  // Ответы — Контакты
-  for (const [key, message] of Object.entries(contactReplies)) {
-    bot.action(key, async (ctx) => {
-      await ctx.answerCbQuery();
-      await ctx.editMessageText(message, {
-        parse_mode: 'HTML',
-        ...Markup.inlineKeyboard([
-          [Markup.button.callback('↩️ Назад', 'menu_contact')],
-          [Markup.button.callback('🏠 Главное меню', 'menu_main')],
-        ])
-      });
-    });
-  }
-
-  // Акции
-  bot.action('promotions', async (ctx) => {
-    await ctx.answerCbQuery();
-    await showPromotions(ctx);
   });
+}
 
-  
+// Акции
+bot.action('promotions', async (ctx) => {
+  await ctx.answerCbQuery();
+  await showPromotions(ctx);
+});
 
 // Основной раздел "ТО и Гарантия"
 bot.action('service', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText(
     '📅 <b>ТО и Гарантия</b>\n\n' +
-    'Покупал АКБ с расширенной гарантией? Тогда не забывай приезжать на ТО! Всё просто — напоминания приходят заранее.',
+      'Покупал АКБ с расширенной гарантией? Тогда не забывай приезжать на ТО! Всё просто — напоминания приходят заранее.',
     {
       parse_mode: 'HTML',
       ...Markup.inlineKeyboard([
@@ -632,8 +647,8 @@ bot.action('service', async (ctx) => {
         [Markup.button.callback('🔔 Отключить/включить напоминания', 'warranty_toggle')],
         [Markup.button.callback('📃 Условия и детали гарантии', 'warranty_details')],
         [Markup.button.callback('↩️ Назад', 'menu_main')],
-      ])
-    }
+      ]),
+    },
   );
 });
 
@@ -643,14 +658,12 @@ bot.action('warranty_next_to', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText(
     '📆 <b>Когда следующее ТО?</b>\n\n' +
-    'Если ты указывал дату покупки, мы напомним тебе за несколько дней до следующего ТО.\n\n' +
-    'ТО проводится раз в 3 месяца с момента покупки.',
+      'Если ты указывал дату покупки, мы напомним тебе за несколько дней до следующего ТО.\n\n' +
+      'ТО проводится раз в 3 месяца с момента покупки.',
     {
       parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('↩️ Назад', 'service')],
-      ])
-    }
+      ...backToMenu('service'),
+    },
   );
 });
 
@@ -658,14 +671,12 @@ bot.action('warranty_how', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText(
     '🛡️ <b>Как работает расширенная гарантия?</b>\n\n' +
-    'Расширенная гарантия действует только при соблюдении условия — регулярное прохождение ТО каждые 3 месяца.\n' +
-    'При каждом ТО мы делаем отметку, и гарантия продолжается.',
+      'Расширенная гарантия действует только при соблюдении условия — регулярное прохождение ТО каждые 3 месяца.\n' +
+      'При каждом ТО мы делаем отметку, и гарантия продолжается.',
     {
       parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('↩️ Назад', 'service')],
-      ])
-    }
+      ...backToMenu('service'),
+    },
   );
 });
 
@@ -673,7 +684,7 @@ bot.action('warranty_skip', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText(
     '📌 <b>Что будет, если пропустить ТО?</b>\n\n' +
-    `Если вы не приедете на ТО в указанный срок (например, спустя 3 месяца после покупки), расширенная гарантия аннулируется. В этом случае останется только базовая гарантия —  1 год.
+      `Если вы не приедете на ТО в указанный срок (например, спустя 3 месяца после покупки), расширенная гарантия аннулируется. В этом случае останется только базовая гарантия —  1 год.
 
 📉 Риск выхода из строя без замены по гарантии спустя год.
 Даже если аккумулятор выйдет из строя по вине завода-изготовителя, при пропущенном ТО вам могут отказать в замене.
@@ -690,10 +701,8 @@ bot.action('warranty_skip', async (ctx) => {
 📞 8-989-722-80-95 — позвоните и мы ответим на любой вопрос.`,
     {
       parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('↩️ Назад', 'service')],
-      ])
-    }
+      ...backToMenu('service'),
+    },
   );
 });
 
@@ -701,13 +710,11 @@ bot.action('warranty_toggle', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText(
     '🔔 <b>Отключить/включить напоминания</b>\n\n' +
-    'Скоро здесь появится возможность управлять напоминаниями. Пока что они включены по умолчанию.',
+      'Скоро здесь появится возможность управлять напоминаниями. Пока что они включены по умолчанию.',
     {
       parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('↩️ Назад', 'service')],
-      ])
-    }
+      ...backToMenu('service'),
+    },
   );
 });
 
@@ -715,8 +722,7 @@ bot.action('warranty_details', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText(
     '🔧 <b>Расширенная гарантия — что это такое?</b>\n\n' +
-
-`Дополнительная гарантия — это как усиленная броня для вашего аккумулятора. Она может продлить срок гарантии до 3-4 лет, но действует на особых условиях.
+      `Дополнительная гарантия — это как усиленная броня для вашего аккумулятора. Она может продлить срок гарантии до 3-4 лет, но действует на особых условиях.
 
 🛠 Чтобы сохранить расширенную гарантию, нужно:
 ✔️ Приезжать к нам на бесплатное ТО каждые 3 месяца с момента покупки.
@@ -730,22 +736,15 @@ bot.action('warranty_details', async (ctx) => {
 Амперыч напомнит заранее, когда пора на ТО!</b>📅`,
     {
       parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('↩️ Назад', 'service')],
-      ])
-    }
+      ...backToMenu('service'),
+    },
   );
 });
 
-
- bot.action('faq', async (ctx) => {
-    await ctx.answerCbQuery();
-    await ctx.editMessageText(faqMessage, {
-      parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('↩️ Назад', 'menu_main')],
-      ]),
-    });
+bot.action('faq', async (ctx) => {
+  await ctx.answerCbQuery();
+  await ctx.editMessageText(faqMessage, {
+    parse_mode: 'HTML',
+    ...backToMenu('menu_main'),
   });
-};
-
+});
