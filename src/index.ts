@@ -1,10 +1,14 @@
 import { Telegraf } from 'telegraf';
 import { BOT_TOKEN } from './config';
-import { help, start } from './commands';
+import { setupButtonHandlers } from './commands/list';
+import { start } from './commands/start';
+import { help } from './commands/help';
 
-export const bot = new Telegraf(BOT_TOKEN as string);
+const bot = new Telegraf(BOT_TOKEN as string);
 
 bot.start(start);
-bot.command('help', help);
+bot.help(help);
+
+setupButtonHandlers(bot);
 
 bot.launch();
