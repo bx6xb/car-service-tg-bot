@@ -5,8 +5,8 @@ types.setTypeParser(20, (val) => Number(val));
 
 export const db = new Pool({
   user: PG_USER,
-  host: PG_HOST,
+  host: PG_HOST || 'localhost',
   database: PG_DATABASE,
   password: PG_PASSWORD,
-  port: PG_PORT,
+  port: PG_PORT || 5432,
 });
