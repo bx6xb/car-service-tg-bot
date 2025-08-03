@@ -1,5 +1,5 @@
 import { Context, Markup } from 'telegraf';
-import { bot } from '..';
+import { bot } from '../config';
 
 const backToMenu = (text: string) =>
   Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', text)]]);
