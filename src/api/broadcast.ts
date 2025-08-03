@@ -1,6 +1,7 @@
-import { Broadcast, db } from './index';
+import { db } from './db';
+import { Broadcast } from './types';
 
-export class BroadcastAPI {
+export class BroadcastApi {
   static createBroadcast = async (message: string, scheduled_at: number): Promise<void> => {
     await db.query(`INSERT INTO broadcasts (message, scheduled_at) VALUES ($1, $2)`, [
       message,
@@ -19,4 +20,4 @@ export class BroadcastAPI {
   };
 }
 
-BroadcastAPI.getBroadcasts().then(console.log);
+// BroadcastApi.getBroadcasts().then(console.log);

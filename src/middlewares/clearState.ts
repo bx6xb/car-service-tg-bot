@@ -8,7 +8,7 @@ bot.use(async (ctx, next) => {
     userId &&
     'text' in ctx.message &&
     ctx.message.text.startsWith('/') &&
-    !['new_broadcast', '/broadcasts'].includes(ctx.message.text)
+    !['/new_broadcast', '/broadcasts'].includes(ctx.message.text)
   ) {
     textState.delete(userId);
   }
