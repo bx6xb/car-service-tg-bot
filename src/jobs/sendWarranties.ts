@@ -1,6 +1,6 @@
 import { WarrantyApi } from '../api';
 import { bot } from '../config';
-import { escapeMarkdownV2, msDays } from '../lib';
+import { escapeMarkdownV2, logError, msDays } from '../lib';
 
 export const sendWarranties = async () => {
   const now = Date.now();
@@ -14,13 +14,26 @@ export const sendWarranties = async () => {
     // Если уведомления временно приостановлены до определённой даты
     if (notifications_paused_until && now < notifications_paused_until) continue;
 
+    if (notifications_paused_until && now >= notifications_paused_until) {
+      try {
+        await WarrantyApi.enableWarranty(id, user_id);
+      } catch (e) {
+        logError(e, 'Failed to enable warranty notification');
+      }
+    }
+
     // Общая продолжительность гарантии в миллисекундах
     const totalDuration = duration_months * msDays(30);
 
     // Если срок гарантии уже прошёл — удаляем напоминание
     if (now > start_date + totalDuration) {
-      await WarrantyApi.removeWarranty(id);
-      await bot.telegram.sendMessage(user_id, `Гарантия на «${battery_name}» завершена.`);
+      try {
+        await WarrantyApi.removeWarranty(id);
+        await bot.telegram.sendMessage(user_id, `Гарантия на «${battery_name}» завершена.`);
+      } catch (e) {
+        logError(e, 'Failed to remove warranty');
+      }
+
       continue;
     }
 

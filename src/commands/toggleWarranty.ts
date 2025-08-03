@@ -3,13 +3,15 @@ import { bot } from '../config';
 import { Warranty, WarrantyApi } from '../api';
 import { escapeMarkdownV2, logError, msDays } from '../lib';
 
-type Action = 'enable' | 'pause' | 'disable';
+type Action =
+  // 'enable' |
+  'pause' | 'disable';
 
 const notificationsMenu = () =>
   Markup.inlineKeyboard([
-    [Markup.button.callback('🔔 Включить уведомления', 'action-enable')],
+    // [Markup.button.callback('🔔 Включить уведомления', 'action-enable')],
     [Markup.button.callback('🔕 Отключить до следующего ТО', 'action-pause')],
-    [Markup.button.callback('🧹 Сбросить гарантию', 'action-disable')],
+    [Markup.button.callback('🚫 Сбросить гарантию', 'action-disable')],
     [Markup.button.callback('↩️ Назад', 'back')],
   ]);
 
@@ -46,15 +48,17 @@ bot.on('callback_query', async (ctx) => {
       const warranties = await WarrantyApi.getUserWarranties(userId);
 
       if (warranties.length === 0) {
-        return await ctx.editMessageText('У вас нет текущих гарантий', goBackMenu());
+        return await ctx.editMessageText(
+          '📅 У вас нет зарегистрированных гарантийных сроков',
+          goBackMenu(),
+        );
       }
 
       const text =
-        action === 'enable'
-          ? '🔔 Включить уведомления'
-          : action === 'pause'
-            ? '🔕 Отключить до следующего ТО'
-            : '🧹 Сбросить гарантию';
+        // action === 'enable'
+        //   ? '🔔 Включить уведомления'
+        //   :
+        action === 'pause' ? '🔕 Отключить до следующего ТО' : '🚫 Сбросить гарантию';
 
       return await ctx.editMessageText(text, warrantiesMenu(warranties, action));
     } catch (e) {
@@ -68,26 +72,26 @@ bot.on('callback_query', async (ctx) => {
     const action = args[1] as Action;
     const warrantyId = +args[2];
 
-    if (action === 'enable') {
-      try {
-        await WarrantyApi.enableWarranty(warrantyId, userId);
+    //     if (action === 'enable') {
+    //       try {
+    //         await WarrantyApi.enableWarranty(warrantyId, userId);
 
-        const text = `🔔 *Уведомления включены*
-Напоминания о техническом осмотре для выбранного аккумулятора активны.
-Мы напомним вам заранее, чтобы сохранить расширенную гарантию!`;
+    //         const text = `🔔 *Уведомления включены*
+    // Напоминания о техническом осмотре для выбранного аккумулятора активны.
+    // Мы напомним вам заранее, чтобы сохранить расширенную гарантию!`;
 
-        return await ctx.editMessageText(escapeMarkdownV2(text), {
-          parse_mode: 'MarkdownV2',
-          reply_markup: goBackMenu().reply_markup,
-        });
-      } catch (e) {
-        logError(e, 'Failed to enable warranty', { warrantyId, userId });
-        return await ctx.editMessageText(
-          '❌ Произошла ошибка при включении уведомления',
-          goBackMenu(),
-        );
-      }
-    }
+    //         return await ctx.editMessageText(escapeMarkdownV2(text), {
+    //           parse_mode: 'MarkdownV2',
+    //           reply_markup: goBackMenu().reply_markup,
+    //         });
+    //       } catch (e) {
+    //         logError(e, 'Failed to enable warranty', { warrantyId, userId });
+    //         return await ctx.editMessageText(
+    //           '❌ Произошла ошибка при включении уведомления',
+    //           goBackMenu(),
+    //         );
+    //       }
+    //     }
 
     if (action === 'pause') {
       const date = await WarrantyApi.getUserStartDate(warrantyId, userId);
@@ -110,7 +114,7 @@ bot.on('callback_query', async (ctx) => {
 
         const text = `🔕 *Уведомления отключены до следующего ТО*
 Напоминания приостановлены, для выбранного АКБ
-Следующее уведомление придёт за 20 дней до следующего планового осмотра.`;
+Следующее уведомления придут за 20 дней и 10 дней до следующего планового осмотра.`;
 
         return await ctx.editMessageText(escapeMarkdownV2(text), {
           parse_mode: 'MarkdownV2',
@@ -131,7 +135,6 @@ bot.on('callback_query', async (ctx) => {
 
         const text = `🚫 *Уведомления отключены навсегда*
 Напоминания по этому аккумулятору отключены.
-Вы всегда можете включить их снова через главное меню бота.
 Мы остаёмся на связи — если что, пишите! ⚡️`;
 
         return await ctx.editMessageText(escapeMarkdownV2(text), {
