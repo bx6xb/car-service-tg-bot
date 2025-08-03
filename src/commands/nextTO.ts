@@ -6,7 +6,7 @@ bot.command('next_to', async (ctx) => {
   const userId = ctx.from.id;
   const warranties = await WarrantyApi.getUserWarranties(userId);
 
-  if (warranties.length === 0) return ctx.reply('У вас нет активных гарантий.');
+  if (warranties.length === 0) return await ctx.reply('У вас нет активных гарантий.');
 
   const now = Date.now();
   let message = 'Ближайшее ТО по каждому аккумулятору:\n\n';
@@ -24,5 +24,5 @@ bot.command('next_to', async (ctx) => {
   }
 
   message += '\nБот уведомит вас заранее, чтобы не забыть отметиться.';
-  ctx.reply(message);
+  await ctx.reply(message);
 });

@@ -3,7 +3,7 @@ import { bot } from '../config';
 import { logError } from '../lib';
 
 bot.start(async (ctx) => {
-  ctx.reply('Привет! Этот');
+  await ctx.reply('Привет! Этот');
 
   if (!ctx.chat) return;
 

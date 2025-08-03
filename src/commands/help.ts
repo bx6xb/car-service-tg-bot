@@ -1,3 +1,5 @@
 import { bot } from '../config';
 
-bot.command('help', (ctx) => ctx.reply('Чем могу помочь?'));
+bot.command('help', async (ctx) => {
+  await ctx.reply('Чем могу помочь?');
+});

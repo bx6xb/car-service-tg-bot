@@ -51,7 +51,7 @@ bot.command('create_warranty', async (ctx) => {
 
 Спасибо, что выбрали *«Ампер»*! ⚡️`;
 
-    ctx.reply(escapeMarkdownV2(text), { parse_mode: 'MarkdownV2' });
+    await ctx.reply(escapeMarkdownV2(text), { parse_mode: 'MarkdownV2' });
   } catch (e) {
     sendTempMessage({ ctx, text: 'Не удалось создать гарантию' });
 
