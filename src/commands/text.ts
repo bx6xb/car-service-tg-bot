@@ -2,7 +2,7 @@ import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { adminMiddleware } from '../middlewares';
 import { broadcastsSteps, newBroadcastSteps, textState } from './state';
-import { BroadcastAPI } from '../api';
+import { BroadcastApi } from '../api';
 import { logError } from '../lib';
 
 bot.on('text', adminMiddleware, async (ctx) => {
@@ -63,7 +63,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
       const timestamp = new Date(isoString).getTime();
 
       try {
-        await BroadcastAPI.createBroadcast(userStep.messageText, timestamp);
+        await BroadcastApi.createBroadcast(userStep.messageText, timestamp);
       } catch (e) {
         logError(e, 'Failed to add new broadcast');
         return await ctx.reply('❌ Произошла ошибка при создании рассылки');
@@ -95,7 +95,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
     }
 
     try {
-      await BroadcastAPI.removeBroadcast(broadcasts[broadcastNumber]);
+      await BroadcastApi.removeBroadcast(broadcasts[broadcastNumber]);
 
       textState.delete(userId);
       broadcastsSteps.delete(userId);

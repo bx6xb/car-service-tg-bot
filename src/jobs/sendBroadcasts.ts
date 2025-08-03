@@ -1,15 +1,15 @@
-import { BroadcastAPI, UserApi } from '../api';
+import { BroadcastApi, UserApi } from '../api';
 import { bot } from '../config';
 import { logError, notifyAdmins } from '../lib';
 
 export const sendBroadcasts = async () => {
   const users = await UserApi.fetchUsers();
-  const broadcasts = await BroadcastAPI.getBroadcasts();
+  const broadcasts = await BroadcastApi.getBroadcasts();
 
   for (const b of broadcasts) {
     if (b.scheduled_at - 1000 <= new Date().getTime()) {
       try {
-        await BroadcastAPI.removeBroadcast(b.id);
+        await BroadcastApi.removeBroadcast(b.id);
       } catch (e) {
         logError(e, 'Failed to remove broadcast');
         notifyAdmins('❌ Не удалось удалить рассылку из базы данных');
