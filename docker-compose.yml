@@ -15,15 +15,6 @@ services:
     ports:
       - '5432:5432'
 
-  watchtower:
-    image: containrrr/watchtower
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=300
-
   bot:
     image: yanturnt/tg-bot:latest
     container_name: tg-bot
