@@ -1,6 +1,17 @@
 import { Telegraf } from 'telegraf';
 import { BOT_TOKEN } from './variables';
+import { logError, notifyAdmins } from '../lib';
 
 export const bot = new Telegraf(BOT_TOKEN as string);
 
+bot.catch((err) => {
+  logError(err, 'Bot error');
+
+  notifyAdmins(String(err));
+});
+
 bot.launch();
+
+process.on('exit', (code) => {
+  notifyAdmins(`Процесс завершился с кодом: ${code}`);
+});

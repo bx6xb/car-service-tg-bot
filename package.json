@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "nodemon",
     "build": "ts-node build.ts",
-    "pm": "pm2 start ecosystem.config.js",
     "start": "node dist/bot.js",
     "format": "prettier . --write",
     "dep": "madge --circular ./src",

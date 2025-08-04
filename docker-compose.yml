@@ -32,7 +32,7 @@ services:
       - postgres
     env_file:
       - .env
-    command: ['pm2-runtime', 'ecosystem.config.js']
+    command: ['node', 'dist/bot.js']
 
 volumes:
   pgdata:

@@ -54,7 +54,6 @@ ADMIN_IDS=123,456,789
 ├── commitlint.config.ts   # Конфигурация для линтинга сообщений коммитов
 ├── docker-compose.yml     # Конфигурация для Docker Compose
 ├── Dockerfile             # Инструкции для сборки Docker-образа
-├── ecosystem.config.js    # Конфигурация для PM2
 ├── eslint.config.mjs      # Конфигурация ESLint
 ├── init.sql               # SQL-скрипты для инициализации базы данных
 ├── nodemon.json           # Конфигурация для автоматической перезагрузки сервера
