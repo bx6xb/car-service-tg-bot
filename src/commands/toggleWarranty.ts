@@ -12,7 +12,7 @@ const notificationsMenu = () =>
     // [Markup.button.callback('🔔 Включить уведомления', 'action-enable')],
     [Markup.button.callback('🔕 Отключить до следующего ТО', 'action-pause')],
     [Markup.button.callback('🚫 Сбросить гарантию', 'action-disable')],
-    [Markup.button.callback('↩️ Назад', 'back')],
+    [Markup.button.callback('↩️ Назад', 'service')],
   ]);
 
 const goBackMenu = () => Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', 'back')]]);
@@ -25,8 +25,8 @@ const warrantiesMenu = (warranties: Warranty[], action: Action) =>
     [Markup.button.callback('↩️ Назад', 'back')],
   ]);
 
-bot.command('toggle_warranty', async (ctx) => {
-  await ctx.reply('🔔 Отключить/включить напоминания', notificationsMenu());
+bot.action('warranty_toggle', async (ctx) => {
+  await ctx.editMessageText('🔔 Отключить/включить напоминания', notificationsMenu());
 });
 
 bot.action('back', async (ctx) => {
