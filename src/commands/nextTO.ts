@@ -1,12 +1,14 @@
 import { WarrantyApi } from '../api';
 import { bot } from '../config';
-import { msDays } from '../lib';
+import { goBackMenu, msDays } from '../lib';
 
-bot.command('next_to', async (ctx) => {
+bot.action('warranty_next_to', async (ctx) => {
+  await ctx.answerCbQuery();
   const userId = ctx.from.id;
   const warranties = await WarrantyApi.getUserWarranties(userId);
 
-  if (warranties.length === 0) return await ctx.reply('У вас нет активных гарантий.');
+  if (warranties.length === 0)
+    return await ctx.editMessageText('У вас нет активных гарантий.', goBackMenu('service'));
 
   const now = Date.now();
   let message = 'Ближайшее ТО по каждому аккумулятору:\n\n';
@@ -24,5 +26,5 @@ bot.command('next_to', async (ctx) => {
   }
 
   message += '\nБот уведомит вас заранее, чтобы не забыть отметиться.';
-  await ctx.reply(message);
+  await ctx.editMessageText(message, goBackMenu('service'));
 });

@@ -4,3 +4,4 @@ export * from './msDays';
 export * from './escapeMarkdownV2';
 export * from './sendTempMessage';
 export * from './notifyAdmins';
+export * from './goBackMenu';

@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { Warranty, WarrantyApi } from '../api';
-import { escapeMarkdownV2, logError, msDays } from '../lib';
+import { escapeMarkdownV2, goBackMenu, logError, msDays } from '../lib';
 
 type Action =
   // 'enable' |
@@ -15,8 +15,6 @@ const notificationsMenu = () =>
     [Markup.button.callback('↩️ Назад', 'service')],
   ]);
 
-const goBackMenu = () => Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', 'back')]]);
-
 const warrantiesMenu = (warranties: Warranty[], action: Action) =>
   Markup.inlineKeyboard([
     ...warranties.map((w) => [
@@ -26,10 +24,7 @@ const warrantiesMenu = (warranties: Warranty[], action: Action) =>
   ]);
 
 bot.action('warranty_toggle', async (ctx) => {
-  await ctx.editMessageText('🔔 Отключить/включить напоминания', notificationsMenu());
-});
-
-bot.action('back', async (ctx) => {
+  await ctx.answerCbQuery();
   await ctx.editMessageText('🔔 Отключить/включить напоминания', notificationsMenu());
 });
 
@@ -50,7 +45,7 @@ bot.on('callback_query', async (ctx) => {
       if (warranties.length === 0) {
         return await ctx.editMessageText(
           '📅 У вас нет зарегистрированных гарантийных сроков',
-          goBackMenu(),
+          goBackMenu('warranty_toggle'),
         );
       }
 
@@ -63,7 +58,10 @@ bot.on('callback_query', async (ctx) => {
       return await ctx.editMessageText(text, warrantiesMenu(warranties, action));
     } catch (e) {
       logError(e, 'Failed to fetch warranties');
-      return await ctx.editMessageText('❌ Произошла ошибка при загрузке гарантий', goBackMenu());
+      return await ctx.editMessageText(
+        '❌ Произошла ошибка при загрузке гарантий',
+        goBackMenu('warranty_toggle'),
+      );
     }
   }
 
@@ -82,13 +80,13 @@ bot.on('callback_query', async (ctx) => {
 
     //         return await ctx.editMessageText(escapeMarkdownV2(text), {
     //           parse_mode: 'MarkdownV2',
-    //           reply_markup: goBackMenu().reply_markup,
+    //           reply_markup: goBackMenu('warranty_toggle).reply_markup,
     //         });
     //       } catch (e) {
     //         logError(e, 'Failed to enable warranty', { warrantyId, userId });
     //         return await ctx.editMessageText(
     //           '❌ Произошла ошибка при включении уведомления',
-    //           goBackMenu(),
+    //           goBackMenu('warranty_toggle),
     //         );
     //       }
     //     }
@@ -96,7 +94,8 @@ bot.on('callback_query', async (ctx) => {
     if (action === 'pause') {
       const date = await WarrantyApi.getUserStartDate(warrantyId, userId);
 
-      if (!date) return await ctx.editMessageText('❌ Гарантия не найдена', goBackMenu());
+      if (!date)
+        return await ctx.editMessageText('❌ Гарантия не найдена', goBackMenu('warranty_toggle'));
 
       const startDate = Number(date.start_date);
       const now = Date.now();
@@ -118,13 +117,13 @@ bot.on('callback_query', async (ctx) => {
 
         return await ctx.editMessageText(escapeMarkdownV2(text), {
           parse_mode: 'MarkdownV2',
-          reply_markup: goBackMenu().reply_markup,
+          reply_markup: goBackMenu('warranty_toggle').reply_markup,
         });
       } catch (e) {
         logError(e, 'Failed to pause warranty', { warrantyId, userId });
         return await ctx.editMessageText(
           '❌ Произошла ошибка при отключении уведомления',
-          goBackMenu(),
+          goBackMenu('warranty_toggle'),
         );
       }
     }
@@ -139,17 +138,17 @@ bot.on('callback_query', async (ctx) => {
 
         return await ctx.editMessageText(escapeMarkdownV2(text), {
           parse_mode: 'MarkdownV2',
-          reply_markup: goBackMenu().reply_markup,
+          reply_markup: goBackMenu('warranty_toggle').reply_markup,
         });
       } catch (e) {
         logError(e, 'Failed to remove warranty', { warrantyId, userId });
         return await ctx.editMessageText(
           '❌ Произошла ошибка при отключении уведомления',
-          goBackMenu(),
+          goBackMenu('warranty_toggle'),
         );
       }
     }
   }
 
-  return await ctx.editMessageText('❌ Неверная команда', goBackMenu());
+  return await ctx.editMessageText('❌ Неверная команда', goBackMenu('menu_main'));
 });
