@@ -6,7 +6,6 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 COPY tsconfig.json ./
-COPY ecosystem.config.js ./
 COPY build.ts ./
 COPY src ./src
 
