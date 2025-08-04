@@ -4,7 +4,6 @@ import { bot } from '../config';
 const backToMenu = (text: string) =>
   Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', text)]]);
 
-// Меню "ТО и Гарантия"
 export const showWarrantyMenu = async (ctx: Context) => {
   await ctx.editMessageText('📅 <b>ТО и Гарантия</b>', {
     parse_mode: 'HTML',
@@ -19,11 +18,10 @@ export const showWarrantyMenu = async (ctx: Context) => {
   });
 };
 
-// Меню АКБ
 const showAkbMenu = async (ctx: Context) => {
-  await ctx.editMessageText('🔋 Всё про АКБ:', {
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
+  await ctx.editMessageText(
+    '🔋 Всё про АКБ:',
+    Markup.inlineKeyboard([
       [
         Markup.button.callback('🔧 Неисправности', 'faults'),
         Markup.button.callback('📋 Правила эксплуатации', 'rules'),
@@ -50,23 +48,21 @@ const showAkbMenu = async (ctx: Context) => {
       ],
       [Markup.button.callback('↩️ Назад', 'menu_main')],
     ]),
-  });
+  );
 };
 
-// Меню Контактов
 const showContactMenu = async (ctx: Context) => {
-  await ctx.editMessageText('📞 Связаться с нами:', {
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
+  await ctx.editMessageText(
+    '📞 Связаться с нами:',
+    Markup.inlineKeyboard([
       [Markup.button.callback('📍 Адрес магазина', 'contact_address')],
       [Markup.button.callback('📞 Позвонить', 'contact_call')],
       [Markup.button.callback('💬 Написать менеджеру', 'contact_chat')],
       [Markup.button.callback('↩️ Назад', 'menu_main')],
     ]),
-  });
+  );
 };
 
-// Блок: Акции и Скидки
 const showPromotions = async (ctx: Context) => {
   await ctx.editMessageText(
     `<b>🎁 Акции и скидки</b>
@@ -101,7 +97,6 @@ const showPromotions = async (ctx: Context) => {
   );
 };
 
-// Часто задаваемые вопросы
 const faqMessage = `📌 <b>Часто задаваемые вопросы</b>
 
 ❓ <b>1. Сколько должен служить аккумулятор?</b>
@@ -133,8 +128,7 @@ const faqMessage = `📌 <b>Часто задаваемые вопросы</b>
 — механические повреждения
 — осыпание активной массы (неправильная эксплуатация)`;
 
-// Ответы — АКБ
-const akbReplies: Record<string, string> = {
+const akbReplies = {
   faults: `🔧 <b>Неисправности аккумуляторов и их устранение</b>\n
 🔋 Разрядка аккумулятора
 💎 Причины: слабый генератор, утечка тока, долгий простой.
@@ -556,25 +550,25 @@ const contactReplies: Record<string, string> = {
 };
 
 bot.hears('📋 Меню', async (ctx) => {
-  await ctx.reply('📋 Главное меню:', {
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
+  await ctx.reply(
+    '📋 Главное меню:',
+    Markup.inlineKeyboard([
       [Markup.button.callback('🔋 Всё про АКБ', 'menu_akb')],
       [Markup.button.callback('🎁 Акции и скидки', 'promotions')],
       [Markup.button.callback('📅 ТО и Гарантия', 'service')],
       [Markup.button.callback('🛠 Частые вопросы', 'faq')],
       [Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
     ]),
-  });
+  );
 });
 
 // Меню
 bot.action('menu_main', async (ctx) => {
   await ctx.answerCbQuery();
 
-  await ctx.editMessageText('📋 Главное меню:', {
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
+  await ctx.editMessageText(
+    '📋 Главное меню:',
+    Markup.inlineKeyboard([
       [
         Markup.button.callback('🔋 Всё про АКБ', 'menu_akb'),
         Markup.button.callback('📞 Связаться с нами', 'menu_contact'),
@@ -585,7 +579,7 @@ bot.action('menu_main', async (ctx) => {
       ],
       [Markup.button.callback('🎁 Акции и скидки', 'promotions')],
     ]),
-  });
+  );
 });
 
 bot.action('menu_akb', async (ctx) => {
