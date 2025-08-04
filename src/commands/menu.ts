@@ -418,20 +418,24 @@ const akbReplies = {
 📞 8-989-722-80-95`,
 };
 
-const contactReplies: Record<string, string> = {
+const contactReplies = {
   contact_address: `📍 Мариупольское шоссе 1 \nhttps://yandex.ru/maps/-/CHTdi0yK`,
   contact_call: `📞 Администратор Ян \n+7 (989) 722-80-95`,
   contact_chat: `💬 Напишите нам — живой человек обязательно поможет 🙃\n@yanamper`,
 };
 
-bot.hears('📋 Меню', async (ctx) => {
+bot.command('menu', async (ctx) => {
   await ctx.reply(
     '📋 Главное меню:',
     Markup.inlineKeyboard([
-      [Markup.button.callback('🔋 Всё про АКБ', 'menu_akb')],
-      [Markup.button.callback('🎁 Акции и скидки', 'promotions')],
-      [Markup.button.callback('📅 ТО и Гарантия', 'service')],
-      [Markup.button.callback('🛠 Частые вопросы', 'faq')],
+      [
+        Markup.button.callback('🔋 Всё про АКБ', 'menu_akb'),
+        Markup.button.callback('🎁 Акции и скидки', 'promotions'),
+      ],
+      [
+        Markup.button.callback('📅 ТО и Гарантия', 'service'),
+        Markup.button.callback('🛠 Частые вопросы', 'faq'),
+      ],
       [Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
     ]),
   );
