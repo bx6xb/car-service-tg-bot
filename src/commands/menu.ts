@@ -1,29 +1,29 @@
-import { Context, Markup } from 'telegraf';
+import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { akbReplies, contactReplies } from '../text';
 import { goBackMenu } from '../lib';
 
-const menu = async (ctx: Context) => {
+const mainMenu = () =>
+  Markup.inlineKeyboard([
+    [
+      Markup.button.callback('🔋 Всё про АКБ', 'menu_akb'),
+      Markup.button.callback('🎁 Акции и скидки', 'promotions'),
+    ],
+    [
+      Markup.button.callback('📅 ТО и Гарантия', 'service'),
+      Markup.button.callback('🛠 Частые вопросы', 'faq'),
+    ],
+    [Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
+  ]);
+
+bot.command('menu', async (ctx) => {
+  await ctx.reply('📋 Главное меню:', mainMenu());
+});
+
+bot.action('menu_main', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
-    '📋 Главное меню:',
-    Markup.inlineKeyboard([
-      [
-        Markup.button.callback('🔋 Всё про АКБ', 'menu_akb'),
-        Markup.button.callback('🎁 Акции и скидки', 'promotions'),
-      ],
-      [
-        Markup.button.callback('📅 ТО и Гарантия', 'service'),
-        Markup.button.callback('🛠 Частые вопросы', 'faq'),
-      ],
-      [Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
-    ]),
-  );
-};
-
-bot.command('menu', menu);
-
-bot.action('menu_main', menu);
+  await ctx.editMessageText('📋 Главное меню:', mainMenu());
+});
 
 bot.action('menu_akb', async (ctx) => {
   await ctx.answerCbQuery();
