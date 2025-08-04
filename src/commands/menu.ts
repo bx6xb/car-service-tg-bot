@@ -1,132 +1,8 @@
-import { Context, Markup } from 'telegraf';
+import { Markup } from 'telegraf';
 import { bot } from '../config';
 
 const backToMenu = (text: string) =>
   Markup.inlineKeyboard([[Markup.button.callback('↩️ Назад', text)]]);
-
-export const showWarrantyMenu = async (ctx: Context) => {
-  await ctx.editMessageText('📅 <b>ТО и Гарантия</b>', {
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
-      [Markup.button.callback('📆 Когда следующее ТО?', 'warranty_next')],
-      [Markup.button.callback('🛡️ Как работает расширенная гарантия', 'warranty_how')],
-      [Markup.button.callback('📌 Что будет, если пропустить', 'warranty_skip')],
-      [Markup.button.callback('🔔 Отключить/включить напоминания', 'warranty_notify')],
-      [Markup.button.callback('📃 Условия и детали гарантии', 'warranty_details')],
-      [Markup.button.callback('↩️ Назад', 'back_to_main')],
-    ]),
-  });
-};
-
-const showAkbMenu = async (ctx: Context) => {
-  await ctx.editMessageText(
-    '🔋 Всё про АКБ:',
-    Markup.inlineKeyboard([
-      [
-        Markup.button.callback('🔧 Неисправности', 'faults'),
-        Markup.button.callback('📋 Правила эксплуатации', 'rules'),
-      ],
-      [
-        Markup.button.callback('🔍 Проверка состояния', 'check'),
-        Markup.button.callback('⚡️ Зарядка', 'charging'),
-      ],
-      [
-        Markup.button.callback('🔄 Замена', 'replacement'),
-        Markup.button.callback('❄️☀️ Температура', 'temperature'),
-      ],
-      [
-        Markup.button.callback('🔌 Нагрузки', 'load'),
-        Markup.button.callback('✅ Качество', 'quality'),
-      ],
-      [
-        Markup.button.callback('⚙️ Совместимость', 'compatibility'),
-        Markup.button.callback('🌡️ Подготовка', 'season'),
-      ],
-      [
-        Markup.button.callback('📦 Хранение', 'storage'),
-        Markup.button.callback('⚖️ Сравнение', 'compare'),
-      ],
-      [Markup.button.callback('↩️ Назад', 'menu_main')],
-    ]),
-  );
-};
-
-const showContactMenu = async (ctx: Context) => {
-  await ctx.editMessageText(
-    '📞 Связаться с нами:',
-    Markup.inlineKeyboard([
-      [Markup.button.callback('📍 Адрес магазина', 'contact_address')],
-      [Markup.button.callback('📞 Позвонить', 'contact_call')],
-      [Markup.button.callback('💬 Написать менеджеру', 'contact_chat')],
-      [Markup.button.callback('↩️ Назад', 'menu_main')],
-    ]),
-  );
-};
-
-const showPromotions = async (ctx: Context) => {
-  await ctx.editMessageText(
-    `<b>🎁 Акции и скидки</b>
-
-<b>1) 🪫 Сдай старый АКБ — получи скидку на новый!</b>
-Сдайте старые аккумуляторы и получите скидку на новые!
-Принимаем отработанные АКБ по честным ценам.
-За аккумулятором — в Аккумуляторный центр <b>АМПЕР</b>!
-
-<b>2) 🔌 Бесплатная забота о твоём АКБ</b>
-Купил аккумулятор у нас?
-Значит, обслуживание — за наш счёт:
-— Проверим АКБ бесплатно  
-— При необходимости подзарядим  
-— Предоставим подменный АКБ при необходимости  
-📍 Таганрог, Мариупольское шоссе, 1
-
-<b>3) ♻️ Повышенный тариф утилизации</b>
-Обновлённый тариф на сдачу старых АКБ:
-— При покупке нового АКБ BATHOFF или ВЛАДАР  
-— Вы получаете повышенный тариф на сдачу старого  
-♻️ Это:
-— Выгодно  
-— Экологично  
-— Удобно  
-
-📌 Подробнее — <a href="https://t.me/yanamper">связаться с админом</a>`,
-    {
-      parse_mode: 'HTML',
-      ...backToMenu('menu_main'),
-    },
-  );
-};
-
-const faqMessage = `📌 <b>Часто задаваемые вопросы</b>
-
-❓ <b>1. Сколько должен служить аккумулятор?</b>
-Средний срок службы АКБ — от 4 до 5 лет или около 60–80 тыс. км пробега.
-Но всё зависит от условий эксплуатации и качества аккумулятора.
-
-❓ <b>2. На что обратить внимание при покупке?</b>
-Дата производства — не должен быть старше 12 месяцев.
-Целостность корпуса и клемм.
-Уточните: подойдёт ли аккумулятор к вашему авто. (размеры, полярность)
-
-❓ <b>3. Нужно ли заряжать новый АКБ?</b>
-Если аккумулятор свежий (менее 6–12 месяцев), подзарядка не обязательна.
-Но небольшая дозарядка всегда будет полезной.
-
-❓ <b>4. Выдаёте чек и гарантийный талон?</b>
-Обязательно! Мы всегда даём:
-🧾 Чек
-🛡️ Гарантийный талон
-Сохраняйте их на весь срок гарантии.
-
-❓ <b>5. Что входит в гарантию?</b>
-📌 Заводской брак:
-— короткое замыкание банки
-— обрыв цепи
-
-⛔️ Не входит:
-— глубокий разряд
-— механические повреждения
-— осыпание активной массы (неправильная эксплуатация)`;
 
 const akbReplies = {
   faults: `🔧 <b>Неисправности аккумуляторов и их устранение</b>\n
@@ -542,7 +418,6 @@ const akbReplies = {
 📞 8-989-722-80-95`,
 };
 
-// Ответы — Контакты
 const contactReplies: Record<string, string> = {
   contact_address: `📍 Мариупольское шоссе 1 \nhttps://yandex.ru/maps/-/CHTdi0yK`,
   contact_call: `📞 Администратор Ян \n+7 (989) 722-80-95`,
@@ -562,7 +437,6 @@ bot.hears('📋 Меню', async (ctx) => {
   );
 });
 
-// Меню
 bot.action('menu_main', async (ctx) => {
   await ctx.answerCbQuery();
 
@@ -584,15 +458,51 @@ bot.action('menu_main', async (ctx) => {
 
 bot.action('menu_akb', async (ctx) => {
   await ctx.answerCbQuery();
-  await showAkbMenu(ctx);
+  await ctx.editMessageText(
+    '🔋 Всё про АКБ:',
+    Markup.inlineKeyboard([
+      [
+        Markup.button.callback('🔧 Неисправности', 'faults'),
+        Markup.button.callback('📋 Правила эксплуатации', 'rules'),
+      ],
+      [
+        Markup.button.callback('🔍 Проверка состояния', 'check'),
+        Markup.button.callback('⚡️ Зарядка', 'charging'),
+      ],
+      [
+        Markup.button.callback('🔄 Замена', 'replacement'),
+        Markup.button.callback('❄️☀️ Температура', 'temperature'),
+      ],
+      [
+        Markup.button.callback('🔌 Нагрузки', 'load'),
+        Markup.button.callback('✅ Качество', 'quality'),
+      ],
+      [
+        Markup.button.callback('⚙️ Совместимость', 'compatibility'),
+        Markup.button.callback('🌡️ Подготовка', 'season'),
+      ],
+      [
+        Markup.button.callback('📦 Хранение', 'storage'),
+        Markup.button.callback('⚖️ Сравнение', 'compare'),
+      ],
+      [Markup.button.callback('↩️ Назад', 'menu_main')],
+    ]),
+  );
 });
 
 bot.action('menu_contact', async (ctx) => {
   await ctx.answerCbQuery();
-  await showContactMenu(ctx);
+  await ctx.editMessageText(
+    '📞 Связаться с нами:',
+    Markup.inlineKeyboard([
+      [Markup.button.callback('📍 Адрес магазина', 'contact_address')],
+      [Markup.button.callback('📞 Позвонить', 'contact_call')],
+      [Markup.button.callback('💬 Написать менеджеру', 'contact_chat')],
+      [Markup.button.callback('↩️ Назад', 'menu_main')],
+    ]),
+  );
 });
 
-// Ответы — АКБ
 for (const [key, message] of Object.entries(akbReplies)) {
   bot.action(key, async (ctx) => {
     await ctx.answerCbQuery();
@@ -606,7 +516,6 @@ for (const [key, message] of Object.entries(akbReplies)) {
   });
 }
 
-// Ответы — Контакты
 for (const [key, message] of Object.entries(contactReplies)) {
   bot.action(key, async (ctx) => {
     await ctx.answerCbQuery();
@@ -620,13 +529,41 @@ for (const [key, message] of Object.entries(contactReplies)) {
   });
 }
 
-// Акции
 bot.action('promotions', async (ctx) => {
   await ctx.answerCbQuery();
-  await showPromotions(ctx);
+  await ctx.editMessageText(
+    `<b>🎁 Акции и скидки</b>
+
+<b>1) 🪫 Сдай старый АКБ — получи скидку на новый!</b>
+Сдайте старые аккумуляторы и получите скидку на новые!
+Принимаем отработанные АКБ по честным ценам.
+За аккумулятором — в Аккумуляторный центр <b>АМПЕР</b>!
+
+<b>2) 🔌 Бесплатная забота о твоём АКБ</b>
+Купил аккумулятор у нас?
+Значит, обслуживание — за наш счёт:
+— Проверим АКБ бесплатно  
+— При необходимости подзарядим  
+— Предоставим подменный АКБ при необходимости  
+📍 Таганрог, Мариупольское шоссе, 1
+
+<b>3) ♻️ Повышенный тариф утилизации</b>
+Обновлённый тариф на сдачу старых АКБ:
+— При покупке нового АКБ BATHOFF или ВЛАДАР  
+— Вы получаете повышенный тариф на сдачу старого  
+♻️ Это:
+— Выгодно  
+— Экологично  
+— Удобно  
+
+📌 Подробнее — <a href="https://t.me/yanamper">связаться с админом</a>`,
+    {
+      parse_mode: 'HTML',
+      ...backToMenu('menu_main'),
+    },
+  );
 });
 
-// Основной раздел "ТО и Гарантия"
 bot.action('service', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText(
@@ -645,8 +582,6 @@ bot.action('service', async (ctx) => {
     },
   );
 });
-
-// Подразделы:
 
 bot.action('warranty_next_to', async (ctx) => {
   await ctx.answerCbQuery();
@@ -700,17 +635,17 @@ bot.action('warranty_skip', async (ctx) => {
   );
 });
 
-bot.action('warranty_toggle', async (ctx) => {
-  await ctx.answerCbQuery();
-  await ctx.editMessageText(
-    '🔔 <b>Отключить/включить напоминания</b>\n\n' +
-      'Скоро здесь появится возможность управлять напоминаниями. Пока что они включены по умолчанию.',
-    {
-      parse_mode: 'HTML',
-      ...backToMenu('service'),
-    },
-  );
-});
+// bot.action('warranty_toggle', async (ctx) => {
+//   await ctx.answerCbQuery();
+//   await ctx.editMessageText(
+//     '🔔 <b>Отключить/включить напоминания</b>\n\n' +
+//       'Скоро здесь появится возможность управлять напоминаниями. Пока что они включены по умолчанию.',
+//     {
+//       parse_mode: 'HTML',
+//       ...backToMenu('service'),
+//     },
+//   );
+// });
 
 bot.action('warranty_details', async (ctx) => {
   await ctx.answerCbQuery();
@@ -737,8 +672,40 @@ bot.action('warranty_details', async (ctx) => {
 
 bot.action('faq', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(faqMessage, {
-    parse_mode: 'HTML',
-    ...backToMenu('menu_main'),
-  });
+  await ctx.editMessageText(
+    `📌 <b>Часто задаваемые вопросы</b>
+
+❓ <b>1. Сколько должен служить аккумулятор?</b>
+Средний срок службы АКБ — от 4 до 5 лет или около 60–80 тыс. км пробега.
+Но всё зависит от условий эксплуатации и качества аккумулятора.
+
+❓ <b>2. На что обратить внимание при покупке?</b>
+Дата производства — не должен быть старше 12 месяцев.
+Целостность корпуса и клемм.
+Уточните: подойдёт ли аккумулятор к вашему авто. (размеры, полярность)
+
+❓ <b>3. Нужно ли заряжать новый АКБ?</b>
+Если аккумулятор свежий (менее 6–12 месяцев), подзарядка не обязательна.
+Но небольшая дозарядка всегда будет полезной.
+
+❓ <b>4. Выдаёте чек и гарантийный талон?</b>
+Обязательно! Мы всегда даём:
+🧾 Чек
+🛡️ Гарантийный талон
+Сохраняйте их на весь срок гарантии.
+
+❓ <b>5. Что входит в гарантию?</b>
+📌 Заводской брак:
+— короткое замыкание банки
+— обрыв цепи
+
+⛔️ Не входит:
+— глубокий разряд
+— механические повреждения
+— осыпание активной массы (неправильная эксплуатация)`,
+    {
+      parse_mode: 'HTML',
+      ...backToMenu('menu_main'),
+    },
+  );
 });
