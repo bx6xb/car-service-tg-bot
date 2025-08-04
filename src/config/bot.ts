@@ -7,7 +7,7 @@ export const bot = new Telegraf(BOT_TOKEN as string);
 bot.catch((err) => {
   logError(err, 'Bot error');
 
-  notifyAdmins(String(err));
+  notifyAdmins(`❌ ОШИБКА БОТА ❌\n${String(err)}`);
 });
 
 bot.launch();
