@@ -11,7 +11,3 @@ bot.catch((err) => {
 });
 
 bot.launch();
-
-process.on('exit', (code) => {
-  notifyAdmins(`Процесс завершился с кодом: ${code}`);
-});
