@@ -7,8 +7,16 @@ export const editMessageText = async (ctx: Context, text: string, extra?: ExtraE
     await ctx.editMessageText(text, extra);
   } catch (e: unknown) {
     const err = e as TelegramError;
-    if (!err.description?.includes('message is not modified')) {
-      logError(err, 'EditMessageText error');
+
+    if (err.description?.includes('message is not modified')) {
+      try {
+        await ctx.answerCbQuery();
+      } catch (cbErr) {
+        logError(cbErr, 'answerCbQuery inside editMessageText');
+      }
+      return;
     }
+
+    logError(err, 'EditMessageText error');
   }
 };
