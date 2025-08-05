@@ -17,3 +17,10 @@ CREATE TABLE IF NOT EXISTS users (
   user_id BIGINT PRIMARY KEY,
   username TEXT
 );
+
+CREATE TABLE IF NOT EXISTS bot_messages (
+  id SERIAL PRIMARY KEY,
+  message_id INTEGER NOT NULL,
+  chat_id BIGINT NOT NULL,
+  created_at BIGINT NOT NULL
+);

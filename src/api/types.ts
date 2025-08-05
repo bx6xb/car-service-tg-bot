@@ -17,3 +17,10 @@ export type Warranty = {
   duration_months: number;
   notifications_paused_until: number | null;
 };
+
+export type Message = {
+  id: number;
+  message_id: number;
+  chat_id: number;
+  created_at: number;
+};

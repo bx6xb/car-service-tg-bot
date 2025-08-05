@@ -6,3 +6,4 @@ export * from './sendTempMessage';
 export * from './notifyAdmins';
 export * from './goBackMenu';
 export * from './editMessageText';
+export * from './cleanupOldMessages';

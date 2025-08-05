@@ -63,5 +63,3 @@ export class WarrantyApi {
     await db.query(`DELETE FROM warranty_reminders WHERE id = $1`, [id]);
   };
 }
-
-WarrantyApi.getAllWarranties().then((res) => console.log(res));

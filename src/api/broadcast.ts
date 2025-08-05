@@ -19,5 +19,3 @@ export class BroadcastApi {
     return rows;
   };
 }
-
-// BroadcastApi.getBroadcasts().then(console.log);

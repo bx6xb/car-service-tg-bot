@@ -1,6 +1,6 @@
 import { Telegraf } from 'telegraf';
 import { BOT_TOKEN } from './variables';
-import { logError, notifyAdmins } from '../lib';
+import { cleanupOldMessages, logError, notifyAdmins } from '../lib';
 
 export const bot = new Telegraf(BOT_TOKEN as string);
 
@@ -10,4 +10,6 @@ bot.catch((err) => {
   notifyAdmins(`❌ ОШИБКА БОТА ❌\n${String(err)}`);
 });
 
-bot.launch();
+bot.launch().then(() => {
+  cleanupOldMessages();
+});

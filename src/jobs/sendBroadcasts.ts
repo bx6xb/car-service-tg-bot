@@ -1,4 +1,4 @@
-import { BroadcastApi, UserApi } from '../api';
+import { BroadcastApi, MessagesApi, UserApi } from '../api';
 import { bot } from '../config';
 import { escapeMarkdownV2, logError, notifyAdmins } from '../lib';
 
@@ -20,14 +20,26 @@ export const sendBroadcasts = async () => {
       for (const user of users) {
         const { username, user_id: id } = user;
 
+        let messageId: number | null = null;
+
         try {
-          await bot.telegram.sendMessage(id, escapeMarkdownV2(b.message), {
+          const { message_id } = await bot.telegram.sendMessage(id, escapeMarkdownV2(b.message), {
             parse_mode: 'MarkdownV2',
             disable_notification: true,
           });
+
+          messageId = message_id;
         } catch (e) {
           usersWithoutBroadcast.push(username ?? id);
           logError(e, 'Failed to send broadcast', { ...(username && { username }), userId: id });
+        }
+
+        if (messageId === null) continue;
+
+        try {
+          await MessagesApi.createMessage(messageId, id);
+        } catch (e) {
+          logError(e, 'Failed to create message', { messageId, userId: id });
         }
       }
 
