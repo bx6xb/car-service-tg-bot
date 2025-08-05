@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { akbReplies, contactReplies } from '../text';
-import { goBackMenu } from '../lib';
+import { editMessageText, goBackMenu } from '../lib';
 import { mainMenu } from './start';
 
 bot.command('menu', async (ctx) => {
@@ -10,12 +10,13 @@ bot.command('menu', async (ctx) => {
 
 bot.action('menu_main', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText('📋 Главное меню:', mainMenu());
+  await editMessageText(ctx, '📋 Главное меню:', mainMenu());
 });
 
 bot.action('menu_akb', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
+  await editMessageText(
+    ctx,
     '🔋 Всё про АКБ:',
     Markup.inlineKeyboard([
       [
@@ -49,7 +50,8 @@ bot.action('menu_akb', async (ctx) => {
 
 bot.action('menu_contact', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
+  await editMessageText(
+    ctx,
     '📞 Связаться с нами:',
     Markup.inlineKeyboard([
       [Markup.button.callback('📍 Адрес магазина', 'contact_address')],
@@ -63,7 +65,7 @@ bot.action('menu_contact', async (ctx) => {
 for (const [key, message] of Object.entries(akbReplies)) {
   bot.action(key, async (ctx) => {
     await ctx.answerCbQuery();
-    await ctx.editMessageText(message, {
+    await editMessageText(ctx, message, {
       parse_mode: 'HTML',
       ...Markup.inlineKeyboard([
         [Markup.button.callback('↩️ Назад', 'menu_akb')],
@@ -76,7 +78,7 @@ for (const [key, message] of Object.entries(akbReplies)) {
 for (const [key, message] of Object.entries(contactReplies)) {
   bot.action(key, async (ctx) => {
     await ctx.answerCbQuery();
-    await ctx.editMessageText(message, {
+    await editMessageText(ctx, message, {
       parse_mode: 'HTML',
       ...Markup.inlineKeyboard([
         [Markup.button.callback('↩️ Назад', 'menu_contact')],
@@ -88,7 +90,8 @@ for (const [key, message] of Object.entries(contactReplies)) {
 
 bot.action('promotions', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
+  await editMessageText(
+    ctx,
     `<b>🎁 Акции и скидки</b>
 
 <b>1) 🪫 Сдай старый АКБ — получи скидку на новый!</b>
@@ -123,9 +126,11 @@ bot.action('promotions', async (ctx) => {
 
 bot.action('service', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
-    '📅 <b>ТО и Гарантия</b>\n\n' +
-      'Покупал АКБ с расширенной гарантией? Тогда не забывай приезжать на ТО! Всё просто — напоминания приходят заранее.',
+
+  editMessageText(
+    ctx,
+    `📅 <b>ТО и Гарантия</b>
+Покупал АКБ с расширенной гарантией? Тогда не забывай приезжать на ТО! Всё просто — напоминания приходят заранее.`,
     {
       parse_mode: 'HTML',
       ...Markup.inlineKeyboard([
@@ -142,7 +147,7 @@ bot.action('service', async (ctx) => {
 
 // bot.action('warranty_next_to', async (ctx) => {
 //   await ctx.answerCbQuery();
-//   await ctx.editMessageText(
+//   await editMessageText(ctx,
 //     '📆 <b>Когда следующее ТО?</b>\n\n' +
 //       'Если ты указывал дату покупки, мы напомним тебе за несколько дней до следующего ТО.\n\n' +
 //       'ТО проводится раз в 3 месяца с момента покупки.',
@@ -155,7 +160,8 @@ bot.action('service', async (ctx) => {
 
 bot.action('warranty_how', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
+  await editMessageText(
+    ctx,
     '🛡️ <b>Как работает расширенная гарантия?</b>\n\n' +
       'Расширенная гарантия действует только при соблюдении условия — регулярное прохождение ТО каждые 3 месяца.\n' +
       'При каждом ТО мы делаем отметку, и гарантия продолжается.',
@@ -168,7 +174,8 @@ bot.action('warranty_how', async (ctx) => {
 
 bot.action('warranty_skip', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
+  await editMessageText(
+    ctx,
     '📌 <b>Что будет, если пропустить ТО?</b>\n\n' +
       `Если вы не приедете на ТО в указанный срок (например, спустя 3 месяца после покупки), расширенная гарантия аннулируется. В этом случае останется только базовая гарантия —  1 год.
 
@@ -194,7 +201,7 @@ bot.action('warranty_skip', async (ctx) => {
 
 // bot.action('warranty_toggle', async (ctx) => {
 //   await ctx.answerCbQuery();
-//   await ctx.editMessageText(
+//   await editMessageText(ctx,
 //     '🔔 <b>Отключить/включить напоминания</b>\n\n' +
 //       'Скоро здесь появится возможность управлять напоминаниями. Пока что они включены по умолчанию.',
 //     {
@@ -206,7 +213,8 @@ bot.action('warranty_skip', async (ctx) => {
 
 bot.action('warranty_details', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
+  await editMessageText(
+    ctx,
     '🔧 <b>Расширенная гарантия — что это такое?</b>\n\n' +
       `Дополнительная гарантия — это как усиленная броня для вашего аккумулятора. Она может продлить срок гарантии до 3-4 лет, но действует на особых условиях.
 
@@ -229,7 +237,8 @@ bot.action('warranty_details', async (ctx) => {
 
 bot.action('faq', async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
+  await editMessageText(
+    ctx,
     `📌 <b>Часто задаваемые вопросы</b>
 
 ❓ <b>1. Сколько должен служить аккумулятор?</b>
