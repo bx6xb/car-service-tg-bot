@@ -144,22 +144,6 @@ bot.action('service', async (ctx) => {
   );
 });
 
-// bot.action('warranty_next_to', async (ctx) => {
-//   await ctx.answerCbQuery();
-//   await editMessageText(
-//     ctx,
-//     `📆 <b>Когда следующее ТО?</b>
-
-// Если ты указывал дату покупки, мы напомним тебе за несколько дней до следующего ТО.
-
-// ТО проводится раз в 3 месяца с момента покупки.`,
-//     {
-//       parse_mode: 'HTML',
-//       ...goBackMenu('service'),
-//     },
-//   );
-// });
-
 bot.action('warranty_how', async (ctx) => {
   await ctx.answerCbQuery();
   await editMessageText(
