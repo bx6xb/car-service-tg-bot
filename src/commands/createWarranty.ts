@@ -2,7 +2,7 @@ import { WarrantyApi } from '../api';
 import { bot } from '../config';
 import { escapeMarkdownV2, formatDate, logError, msDays, sendTempMessage } from '../lib';
 
-bot.command('create_warranty', async (ctx) => {
+bot.command('w', async (ctx) => {
   const args = ctx.message.text.split(' ').slice(1);
 
   if (args.length < 2) {

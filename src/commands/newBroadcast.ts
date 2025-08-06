@@ -3,7 +3,7 @@ import { bot } from '../config';
 import { adminMiddleware } from '../middlewares';
 import { newBroadcastSteps, textState } from './state';
 
-bot.command('new_broadcast', adminMiddleware, async (ctx) => {
+bot.command('b', adminMiddleware, async (ctx) => {
   const userId = ctx.from?.id;
 
   textState.set(userId, 'new_broadcast');
