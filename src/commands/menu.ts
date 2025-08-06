@@ -5,7 +5,11 @@ import { editMessageText, goBackMenu } from '../lib';
 import { mainMenu } from './start';
 
 bot.command('menu', async (ctx) => {
-  await ctx.reply('📋 Главное меню:', mainMenu());
+  const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());
+
+  await ctx.pinChatMessage(message_id, {
+    disable_notification: true,
+  });
 });
 
 bot.action('menu_main', async (ctx) => {
