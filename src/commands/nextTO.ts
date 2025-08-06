@@ -1,6 +1,6 @@
 import { WarrantyApi } from '../api';
 import { bot } from '../config';
-import { editMessageText, goBackMenu, msDays } from '../lib';
+import { editMessageText, formatDate, goBackMenu, msDays } from '../lib';
 
 bot.action('warranty_next_to', async (ctx) => {
   await ctx.answerCbQuery();
@@ -21,7 +21,7 @@ bot.action('warranty_next_to', async (ctx) => {
 
     const monthsPassed = Math.floor((now - start_date) / msDays(90));
     const nextTO = start_date + (monthsPassed + 1) * msDays(90);
-    const date = new Date(nextTO).toLocaleDateString().replace(/\//g, '.');
+    const date = formatDate(nextTO, false);
     message += `🔋 ${battery_name} — ${date}\n`;
   }
 
