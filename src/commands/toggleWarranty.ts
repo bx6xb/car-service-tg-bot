@@ -20,7 +20,7 @@ const warrantiesMenu = (warranties: Warranty[], action: Action) =>
     ...warranties.map((w) => [
       Markup.button.callback(`🔋 ${w.battery_name}`, `warranty-${action}-${w.id}`),
     ]),
-    [Markup.button.callback('↩️ Назад', 'back')],
+    [Markup.button.callback('↩️ Назад', 'warranty_toggle')],
   ]);
 
 bot.action('warranty_toggle', async (ctx) => {
@@ -123,7 +123,8 @@ bot.on('callback_query', async (ctx) => {
         });
       } catch (e) {
         logError(e, 'Failed to pause warranty', { warrantyId, userId });
-        return await editMessageText(ctx,
+        return await editMessageText(
+          ctx,
           '❌ Произошла ошибка при отключении уведомления',
           goBackMenu('warranty_toggle'),
         );
@@ -144,7 +145,8 @@ bot.on('callback_query', async (ctx) => {
         });
       } catch (e) {
         logError(e, 'Failed to remove warranty', { warrantyId, userId });
-        return await editMessageText(ctx,
+        return await editMessageText(
+          ctx,
           '❌ Произошла ошибка при отключении уведомления',
           goBackMenu('warranty_toggle'),
         );
