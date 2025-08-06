@@ -1,15 +1,12 @@
 import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { akbReplies, contactReplies } from '../text';
-import { editMessageText, goBackMenu } from '../lib';
+import { editMessageText, goBackMenu, pinMessage } from '../lib';
 import { mainMenu } from './start';
 
 bot.command('menu', async (ctx) => {
   const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());
-
-  await ctx.pinChatMessage(message_id, {
-    disable_notification: true,
-  });
+  await pinMessage(ctx, message_id);
 });
 
 bot.action('menu_main', async (ctx) => {

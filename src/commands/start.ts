@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
 import { UserApi } from '../api';
 import { bot } from '../config';
-import { logError, notifyAdmins } from '../lib';
+import { logError, notifyAdmins, pinMessage } from '../lib';
 
 export const mainMenu = () =>
   Markup.inlineKeyboard([
@@ -22,10 +22,7 @@ bot.start(async (ctx) => {
   const { id, username } = ctx.from;
 
   try {
-    await ctx.pinChatMessage(message_id, {
-      disable_notification: true,
-    });
-
+    await pinMessage(ctx, message_id);
     await UserApi.addUser(id, username);
   } catch (e) {
     logError(e, 'Failed to add user');
