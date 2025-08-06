@@ -25,5 +25,13 @@ services:
       - .env
     command: ['node', 'dist/bot.js']
 
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 tg-bot
+
 volumes:
   pgdata:
