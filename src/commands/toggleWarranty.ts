@@ -99,7 +99,7 @@ bot.on('callback_query', async (ctx) => {
       if (!date)
         return await editMessageText(ctx, '❌ Гарантия не найдена', goBackMenu('warranty_toggle'));
 
-      const startDate = Number(date.start_date);
+      const startDate = date.start_date;
       const now = Date.now();
 
       const MS_IN_90_DAYS = msDays(90);

@@ -3,7 +3,7 @@ import { bot } from '../config';
 import { escapeMarkdownV2, logError, msDays } from '../lib';
 
 export const sendWarranties = async () => {
-  const now = Date.now();
+  const now = new Date().setHours(0, 0, 0, 0);
 
   const warranties = await WarrantyApi.getAllWarranties();
 
@@ -26,7 +26,7 @@ export const sendWarranties = async () => {
     const totalDuration = duration_months * msDays(30);
 
     // Если срок гарантии уже прошёл — удаляем напоминание
-    if (now > start_date + totalDuration) {
+    if (now >= start_date + totalDuration) {
       try {
         await WarrantyApi.removeWarranty(id);
         await bot.telegram.sendMessage(user_id, `Гарантия на «${battery_name}» завершена.`);
@@ -42,8 +42,8 @@ export const sendWarranties = async () => {
 
     // Следующий ТО = дата старта + количество прошедших ТО * 90 дней
     const nextTO = start_date + (monthsPassed + 1) * msDays(90);
-    const in10DaysToday = nextTO - msDays(10) < now;
-    const in20DaysToday = nextTO - msDays(20) < now;
+    const in10DaysToday = nextTO - msDays(10) === now;
+    const in20DaysToday = nextTO - msDays(20) === now;
 
     if (in10DaysToday) {
       const text = `📅 *Уведомление на 80-й день:*
