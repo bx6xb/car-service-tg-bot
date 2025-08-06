@@ -204,20 +204,6 @@ bot.action('warranty_skip', async (ctx) => {
   );
 });
 
-bot.action('warranty_toggle', async (ctx) => {
-  await ctx.answerCbQuery();
-  await editMessageText(
-    ctx,
-    `🔔 <b>Отключить/включить напоминания</b>
-    
-Скоро здесь появится возможность управлять напоминаниями. Пока что они включены по умолчанию.`,
-    {
-      parse_mode: 'HTML',
-      ...goBackMenu('service'),
-    },
-  );
-});
-
 bot.action('warranty_details', async (ctx) => {
   await ctx.answerCbQuery();
   await editMessageText(
