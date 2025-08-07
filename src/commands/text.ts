@@ -59,7 +59,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
       const [day, month, year] = date.split('.');
       const [hours] = text.split(':');
 
-      const isoString = `${year}-${month}-${day}T${hours}:00:00`;
+      const isoString = `${year}-${month}-${day}T${+hours - 3}:00:00`;
       const timestamp = new Date(isoString).getTime();
 
       try {
