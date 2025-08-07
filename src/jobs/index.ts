@@ -3,25 +3,13 @@ import { sendBroadcasts } from './sendBroadcasts';
 import { sendWarranties } from './sendWarranties';
 import { cleanupOldMessages } from '../lib';
 
-cron.schedule(
-  '0 9 * * *',
-  () => {
-    cleanupOldMessages();
-    sendBroadcasts();
-    sendWarranties();
-  },
-  {
-    timezone: 'Europe/Moscow',
-  },
-);
+cron.schedule('0 6 * * *', () => {
+  cleanupOldMessages();
+  sendBroadcasts();
+  sendWarranties();
+});
 
-cron.schedule(
-  '0 17 * * *',
-  () => {
-    cleanupOldMessages();
-    sendBroadcasts();
-  },
-  {
-    timezone: 'Europe/Moscow',
-  },
-);
+cron.schedule('0 14 * * *', () => {
+  cleanupOldMessages();
+  sendBroadcasts();
+});
