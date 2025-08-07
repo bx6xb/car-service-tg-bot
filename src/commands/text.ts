@@ -57,9 +57,9 @@ bot.on('text', adminMiddleware, async (ctx) => {
       if (!date || !userStep.messageText) return;
 
       const [day, month, year] = date.split('.');
-      const [hours] = text.split(':');
+      const UTCHours = text === '09:00' ? '06' : '14';
 
-      const isoString = `${year}-${month}-${day}T${+hours - 3}:00:00`;
+      const isoString = `${year}-${month}-${day}T${UTCHours}:00:00`;
       const timestamp = new Date(isoString).getTime();
 
       try {
