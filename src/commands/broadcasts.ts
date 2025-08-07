@@ -4,7 +4,7 @@ import { formatDate, logError } from '../lib';
 import { adminMiddleware } from '../middlewares';
 import { broadcastsSteps, textState } from './state';
 
-bot.command('broadcasts', adminMiddleware, async (ctx) => {
+bot.command('b', adminMiddleware, async (ctx) => {
   try {
     const broadcasts = await BroadcastApi.getBroadcasts();
 

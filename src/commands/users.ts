@@ -3,7 +3,7 @@ import { bot } from '../config';
 import { logError } from '../lib';
 import { adminMiddleware } from '../middlewares';
 
-bot.command('users', adminMiddleware, async (ctx) => {
+bot.command('u', adminMiddleware, async (ctx) => {
   try {
     const users = await UserApi.fetchUsers();
     const { message_id } = await ctx.reply(`👤 ${users.length}`);
