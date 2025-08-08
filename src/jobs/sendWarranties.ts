@@ -20,6 +20,7 @@ export const sendWarranties = async () => {
       } catch (e) {
         logError(e, 'Failed to enable warranty notification');
       }
+      continue;
     }
 
     // Общая продолжительность гарантии в миллисекундах
