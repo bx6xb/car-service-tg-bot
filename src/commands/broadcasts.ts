@@ -1,6 +1,6 @@
 import { BroadcastApi } from '../api';
 import { bot } from '../config';
-import { formatDate, logError } from '../lib';
+import { formatDate, logError, sendTempMessage } from '../lib';
 import { adminMiddleware } from '../middlewares';
 import { broadcastsSteps, textState } from './state';
 
@@ -9,9 +9,13 @@ bot.command('b', adminMiddleware, async (ctx) => {
     const broadcasts = await BroadcastApi.getBroadcasts();
 
     if (broadcasts.length === 0) {
-      await ctx.reply(
-        'Нет существующих рассылок\nИспользуйте /new_broadcast для создания новой рассылки',
-      );
+      sendTempMessage({
+        ctx,
+      });
+      sendTempMessage({
+        ctx,
+        text: 'Нет существующих рассылок\nИспользуйте /new_broadcast для создания новой рассылки',
+      });
       return;
     }
 
@@ -29,7 +33,17 @@ bot.command('b', adminMiddleware, async (ctx) => {
     textState.set(userId, 'broadcasts');
     broadcastsSteps.set(userId, obj);
 
-    await ctx.reply(`${string}Напишите номер рассылки для удаления`);
+    sendTempMessage({
+      ctx,
+    });
+    sendTempMessage({
+      ctx,
+      text: `${string}Напишите номер рассылки для удаления`,
+    });
+
+    setTimeout(() => {
+      textState.delete(userId);
+    }, 3000);
   } catch (e) {
     await ctx.reply('❌ Произошла ошибка при загружке данных');
     logError(e, 'Failed to get broadcasts');
