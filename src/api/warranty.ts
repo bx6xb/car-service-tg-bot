@@ -63,3 +63,5 @@ export class WarrantyApi {
     await db.query(`DELETE FROM warranty_reminders WHERE id = $1`, [id]);
   };
 }
+
+// INSERT INTO warranty_reminders (user_id, battery_name, start_date, duration_months) VALUES (1383973248, 'ELAB 60оп', 1747440000000, 24);
