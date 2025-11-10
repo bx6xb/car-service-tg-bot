@@ -23,7 +23,6 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.27.0",
     "@types/node": "^22.15.21",
-    "@types/pg": "^8.15.4",
     "esbuild": "^0.25.4",
     "eslint": "^9.27.0",
     "globals": "^16.1.0",
@@ -36,9 +35,9 @@
     "typescript-eslint": "^8.32.1"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.7.0",
     "dotenv": "^16.5.0",
     "node-cron": "^4.2.1",
-    "pg": "^8.16.0",
     "telegraf": "^4.16.3"
   },
   "lint-staged": {

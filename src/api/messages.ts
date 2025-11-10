@@ -1,25 +1,38 @@
-import { db } from './db';
+import { supabase } from '../config';
 import { Message } from './types';
 
 export class MessagesApi {
   static getMessages = async (): Promise<Message[]> => {
-    const res = await db.query(`
-      SELECT id, message_id, chat_id, created_at FROM bot_messages;
-    `);
+    const { data, error } = await supabase
+      .from('bot_messages')
+      .select('id, message_id, chat_id, created_at')
+      .order('created_at', { ascending: true })
+      .returns<Message[]>();
 
-    return res.rows;
+    if (error) {
+      throw new Error(`Failed to fetch messages: ${error.message}`);
+    }
+
+    return data || [];
   };
 
   static createMessage = async (messageId: number, chatId: number): Promise<void> => {
     const createdAt = new Date().getTime();
 
-    await db.query(
-      'INSERT INTO bot_messages (message_id, chat_id, created_at) VALUES ($1, $2, $3)',
-      [messageId, chatId, createdAt],
-    );
+    const { error } = await supabase
+      .from('bot_messages')
+      .insert([{ message_id: messageId, chat_id: chatId, created_at: createdAt }]);
+
+    if (error) {
+      throw new Error(`Failed to create message: ${error.message}`);
+    }
   };
 
   static deleteMessage = async (id: number): Promise<void> => {
-    await db.query('DELETE FROM bot_messages WHERE id = $1', [id]);
+    const { error } = await supabase.from('bot_messages').delete().eq('id', id);
+
+    if (error) {
+      throw new Error(`Failed to delete message: ${error.message}`);
+    }
   };
 }

@@ -14,7 +14,7 @@ bot.command('b', adminMiddleware, async (ctx) => {
       });
       sendTempMessage({
         ctx,
-        text: 'Нет существующих рассылок\nИспользуйте /new_broadcast для создания новой рассылки',
+        text: 'Нет существующих рассылок\nИспользуйте /nb для создания новой рассылки',
       });
       return;
     }

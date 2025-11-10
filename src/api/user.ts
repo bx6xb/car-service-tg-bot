@@ -1,18 +1,29 @@
-import { db } from './db';
+import { supabase } from '../config';
 import { User } from './types';
 
 export class UserApi {
-  static fetchUsers = async (): Promise<User[]> =>
-    (await db.query('SELECT * FROM users')).rows as User[];
+  static fetchUsers = async (): Promise<User[]> => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*').returns<User[]>()
+
+    if (error) {
+      throw new Error(`Failed to fetch users: ${error.message}`);
+    }
+
+    return data || [];
+  };
 
   static addUser = async (userId: number, username?: string): Promise<void> => {
-    await db.query(
-      `
-    INSERT INTO users (user_id, username)
-    VALUES ($1, $2)
-    ON CONFLICT (user_id) DO UPDATE SET username = EXCLUDED.username
-    `,
-      [userId, username ?? null],
-    );
+    const { error } = await supabase
+      .from('users')
+      .upsert(
+        { user_id: userId, username: username ?? null },
+        { onConflict: 'user_id' }
+      );
+
+    if (error) {
+      throw new Error(`Failed to add/update user: ${error.message}`);
+    }
   };
 }

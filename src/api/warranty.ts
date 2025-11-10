@@ -1,31 +1,50 @@
-import { db } from './db';
+import { supabase } from '../config';
 import { Warranty } from './types';
 
 export class WarrantyApi {
   static getAllWarranties = async (): Promise<Warranty[]> => {
-    const warranties = await db.query(`SELECT * FROM warranty_reminders`);
+    const { data, error } = await supabase
+      .from('warranty_reminders')
+      .select('*')
+      .returns<Warranty[]>();
 
-    return warranties.rows;
+    if (error) {
+      throw new Error(`Failed to fetch warranties: ${error.message}`);
+    }
+
+    return data || [];
   };
 
   static getUserWarranties = async (userId: number): Promise<Warranty[]> => {
-    const warranties = await db.query(`SELECT * FROM warranty_reminders WHERE user_id = $1`, [
-      userId,
-    ]);
+    const { data, error } = await supabase
+      .from('warranty_reminders')
+      .select('*')
+      .eq('user_id', userId)
+      .returns<Warranty[]>();
 
-    return warranties.rows;
+    if (error) {
+      throw new Error(`Failed to fetch user warranties: ${error.message}`);
+    }
+
+    return data || [];
   };
 
   static getUserStartDate = async (
     id: number,
     userId: number,
   ): Promise<{ start_date: number } | undefined> => {
-    const dates = await db.query(
-      `SELECT start_date FROM warranty_reminders WHERE id = $1 AND user_id = $2`,
-      [id, userId],
-    );
+    const { data, error } = await supabase
+      .from('warranty_reminders')
+      .select('start_date')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single<{ start_date: number }>();
 
-    return dates.rows[0];
+    if (error) {
+      throw new Error(`Failed to fetch warranty start date: ${error.message}`);
+    }
+
+    return data;
   };
 
   static createWarranty = async ({
@@ -36,32 +55,52 @@ export class WarrantyApi {
   }: {
     userId: number;
     batteryName: string;
-    duration: number;
     startDate: number;
+    duration: number;
   }): Promise<void> => {
-    await db.query(
-      `INSERT INTO warranty_reminders (user_id, battery_name, start_date, duration_months) VALUES ($1, $2, $3, $4)`,
-      [userId, batteryName, startDate, duration],
-    );
+    const { error } = await supabase.from('warranty_reminders').insert([
+      {
+        user_id: userId,
+        battery_name: batteryName,
+        start_date: startDate,
+        duration_months: duration,
+      },
+    ]);
+
+    if (error) {
+      throw new Error(`Failed to create warranty: ${error.message}`);
+    }
   };
 
   static pauseWarranty = async (nextTODate: number, id: number, userId: number): Promise<void> => {
-    await db.query(
-      `UPDATE warranty_reminders SET notifications_paused_until = $1 WHERE id = $2 AND user_id = $3`,
-      [nextTODate, id, userId],
-    );
+    const { error } = await supabase
+      .from('warranty_reminders')
+      .update({ notifications_paused_until: nextTODate })
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) {
+      throw new Error(`Failed to pause warranty: ${error.message}`);
+    }
   };
 
   static enableWarranty = async (id: number, userId: number): Promise<void> => {
-    await db.query(
-      `UPDATE warranty_reminders SET notifications_paused_until = NULL WHERE id = $1 AND user_id = $2`,
-      [id, userId],
-    );
+    const { error } = await supabase
+      .from('warranty_reminders')
+      .update({ notifications_paused_until: null })
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) {
+      throw new Error(`Failed to enable warranty: ${error.message}`);
+    }
   };
 
   static removeWarranty = async (id: number): Promise<void> => {
-    await db.query(`DELETE FROM warranty_reminders WHERE id = $1`, [id]);
+    const { error } = await supabase.from('warranty_reminders').delete().eq('id', id);
+
+    if (error) {
+      throw new Error(`Failed to remove warranty: ${error.message}`);
+    }
   };
 }
-
-// INSERT INTO warranty_reminders (user_id, battery_name, start_date, duration_months) VALUES (1383973248, 'ELAB 60оп', 1747440000000, 24);
