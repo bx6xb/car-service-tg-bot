@@ -1,1 +1,1 @@
-export const escapeMarkdownV2 = (text: string): string => text.replace(/([.!-])/g, '\\$1')
+export const escapeMarkdownV2 = (text: string): string => text.replace(/([.!-#+])/g, '\\$1');

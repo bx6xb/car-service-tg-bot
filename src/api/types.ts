@@ -24,3 +24,20 @@ export type Message = {
   chat_id: number;
   created_at: number;
 };
+
+export type RequestData = {
+  car_brand: string;
+  car_model: string;
+  engine_type: 'petrol' | 'diesel';
+  production_year: number;
+  delivery_method: 'delivery' | 'pickup';
+  phone: string;
+};
+
+export type Request = {
+  id: number;
+  description: string;
+  status: 'new' | 'in_progress' | 'completed' | 'cancelled';
+  source: 'website' | 'tg';
+  created_at: string;
+} & RequestData

@@ -1,6 +1,7 @@
 export * from './start';
 export * from './menu';
 export * from './nextTO';
+export * from './batteryRequest';
 export * from './newBroadcast';
 export * from './broadcasts';
 export * from './createWarranty';

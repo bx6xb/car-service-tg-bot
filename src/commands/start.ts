@@ -5,6 +5,7 @@ import { logError, notifyAdmins, pinMessage } from '../lib';
 
 export const mainMenu = () =>
   Markup.inlineKeyboard([
+    [Markup.button.callback('♦️ Подбор аккумулятора', 'battery_request')],
     [
       Markup.button.callback('🔋 Всё про АКБ', 'menu_akb'),
       Markup.button.callback('🎁 Акции и скидки', 'promotions'),

@@ -1,15 +1,23 @@
 import { Markup } from 'telegraf';
-import { bot } from '../config';
-import { adminMiddleware } from '../middlewares';
-import { broadcastsSteps, newBroadcastSteps, textState } from './state';
-import { BroadcastApi } from '../api';
-import { logError } from '../lib';
+import { ADMIN_IDS, bot } from '../config';
+import { broadcastsSteps, newBroadcastSteps, requestSteps, textState } from './state';
+import { BroadcastApi, RequestApi, RequestData } from '../api';
+import {
+  getDeliveryText,
+  getEngineText,
+  getSource,
+  logError,
+  notifyAdmins,
+  pinMessage,
+} from '../lib';
+import { mainMenu } from './start';
 
-bot.on('text', adminMiddleware, async (ctx) => {
+bot.on('text', async (ctx) => {
   const userId = ctx.from?.id;
   const userState = textState.get(userId);
+  const isAdmin = ADMIN_IDS.includes(userId);
 
-  if (userState === 'new_broadcast') {
+  if (userState === 'new_broadcast' && isAdmin) {
     const userStep = newBroadcastSteps.get(userId);
     const text = ctx.message.text;
 
@@ -79,7 +87,7 @@ bot.on('text', adminMiddleware, async (ctx) => {
     return;
   }
 
-  if (userState === 'broadcasts') {
+  if (userState === 'broadcasts' && isAdmin) {
     const userId = ctx.from?.id;
 
     if (!broadcastsSteps.has(userId)) return;
@@ -104,5 +112,139 @@ bot.on('text', adminMiddleware, async (ctx) => {
       logError(e, 'Failed to remove broadcast');
       return await ctx.reply('❌ Произошла ошибка при удалении рассылки, введите номер ещё раз');
     }
+  }
+
+  if (userState === 'battery_request') {
+    const userStep = requestSteps.get(userId);
+    const text = ctx.message.text;
+
+    const requestData = requestSteps.get(userId);
+
+    if (userStep?.step === 'car_brand') {
+      requestSteps.set(userId, {
+        ...requestData,
+        step: 'car_model',
+        car_brand: text,
+      });
+
+      await ctx.reply('Введите модель автомобиля');
+      return;
+    }
+
+    if (userStep?.step === 'car_model') {
+      requestSteps.set(userId, {
+        ...requestData,
+        step: 'engine_type',
+        car_model: text,
+      });
+
+      await ctx.reply(
+        'Выберите тип двигателя',
+        Markup.keyboard([['Бензин'], ['Дизель']])
+          .oneTime()
+          .resize(),
+      );
+      return;
+    }
+
+    if (userStep?.step === 'engine_type') {
+      if (text !== 'Бензин' && text !== 'Дизель') {
+        await ctx.reply("❌ Выберите только 'Бензин' или 'Дизель'");
+        return;
+      }
+
+      requestSteps.set(userId, {
+        ...requestData,
+        step: 'production_year',
+        engine_type: text === 'Бензин' ? 'petrol' : 'diesel',
+      });
+
+      await ctx.reply('Введите год выпуска', Markup.removeKeyboard());
+      return;
+    }
+
+    if (userStep?.step === 'production_year') {
+      const match = text.trim().match(/^\d{4}$/);
+      if (!match) {
+        await ctx.reply('❌ Введите год в формате ГГГГ');
+        return;
+      }
+
+      requestSteps.set(userId, {
+        ...requestData,
+        step: 'delivery_method',
+        production_year: +text,
+      });
+
+      await ctx.reply(
+        'Выберите способ получения',
+        Markup.keyboard([['С доставкой и установкой'], ['Самовывоз']])
+          .oneTime()
+          .resize(),
+      );
+      return;
+    }
+
+    if (userStep?.step === 'delivery_method') {
+      if (text !== 'С доставкой и установкой' && text !== 'Самовывоз') {
+        await ctx.reply("❌ Выберите только 'С доставкой и установкой' или 'Самовывоз'");
+        return;
+      }
+
+      requestSteps.set(userId, {
+        ...requestData,
+        step: 'delivery_method',
+        delivery_method: text === 'С доставкой и установкой' ? 'delivery' : 'pickup',
+        phone: userId.toString(),
+      });
+
+      const result = requestSteps.get(userId);
+
+      if (result) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { step, ...data } = result;
+        const request = await RequestApi.createRequest(data as RequestData);
+
+        if (typeof request === 'string') {
+          await ctx.reply(`❌ Произошла ошибка при создании заявки`, Markup.removeKeyboard());
+          setTimeout(async () => {
+            const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());
+            await pinMessage(ctx, message_id);
+          }, 1000);
+          return;
+        }
+
+        await ctx.reply(
+          `Готово! ⚙️
+Менеджер Ян уже подбирает для вас подходящие аккумуляторы.
+    
+Чуть позже в этот чат придут варианты — просто дождитесь сообщения.👀`,
+          Markup.removeKeyboard(),
+        );
+
+        setTimeout(async () => {
+          const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());
+          await pinMessage(ctx, message_id);
+        }, 1000);
+
+        const messageText = `*Новая заявка #${request.id}*
+Марка авто: ${request.car_brand}
+Модель авто: ${request.car_model}
+Тип двигателя: ${getEngineText(request.engine_type)}
+Год выпуска: ${request.production_year}
+Способ получения: ${getDeliveryText(request.delivery_method)}
+Телефон: ${request.phone}
+Откуда: ${getSource(request.source)}`;
+
+        notifyAdmins(messageText);
+      }
+
+      textState.delete(userId);
+      requestSteps.delete(userId);
+
+      return;
+    }
+
+    return;
   }
 });

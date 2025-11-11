@@ -8,3 +8,4 @@ export * from './goBackMenu';
 export * from './editMessageText';
 export * from './cleanupOldMessages';
 export * from './pinMessage';
+export * from './request';
