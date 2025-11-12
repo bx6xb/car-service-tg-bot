@@ -7,5 +7,6 @@ export * from './broadcasts';
 export * from './createWarranty';
 export * from './toggleWarranty';
 export * from './users';
-// './text' must be last for correct work
-export * from './text';
+export * from './contact';
+// './message' must be last for correct work
+export * from './message';

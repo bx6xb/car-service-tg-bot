@@ -9,3 +9,5 @@ export * from './editMessageText';
 export * from './cleanupOldMessages';
 export * from './pinMessage';
 export * from './request';
+export * from './selectBatteryLastStep';
+export * from './showStart';

@@ -1,25 +1,34 @@
 import { Markup } from 'telegraf';
-import { ADMIN_IDS, bot } from '../config';
-import { broadcastsSteps, newBroadcastSteps, requestSteps, textState } from './state';
-import { BroadcastApi, RequestApi, RequestData } from '../api';
+import { ADMIN_IDS, bot, supabase } from '../config';
+import type { Message } from 'telegraf/typings/core/types/typegram';
+import {
+  batterySelectSteps,
+  broadcastsSteps,
+  newBroadcastSteps,
+  requestSteps,
+  textState,
+} from './state';
 import {
   getDeliveryText,
   getEngineText,
   getSource,
   logError,
   notifyAdmins,
-  pinMessage,
+  selectBatteryLastStep,
+  showStart,
 } from '../lib';
-import { mainMenu } from './start';
+import { BroadcastApi, Request, RequestApi, RequestData } from '../api';
 
-bot.on('text', async (ctx) => {
+bot.on('message', async (ctx) => {
+  const message = ctx.message as Message.TextMessage;
+
   const userId = ctx.from?.id;
   const userState = textState.get(userId);
   const isAdmin = ADMIN_IDS.includes(userId);
 
   if (userState === 'new_broadcast' && isAdmin) {
     const userStep = newBroadcastSteps.get(userId);
-    const text = ctx.message.text;
+    const text = message.text;
 
     if (userStep?.step === 'message') {
       newBroadcastSteps.set(userId, {
@@ -92,7 +101,7 @@ bot.on('text', async (ctx) => {
 
     if (!broadcastsSteps.has(userId)) return;
 
-    const broadcastNumber = ctx.message.text;
+    const broadcastNumber = message.text;
     const broadcasts = broadcastsSteps.get(userId);
 
     if (!broadcasts) return;
@@ -116,7 +125,7 @@ bot.on('text', async (ctx) => {
 
   if (userState === 'battery_request') {
     const userStep = requestSteps.get(userId);
-    const text = ctx.message.text;
+    const text = message.text;
 
     const requestData = requestSteps.get(userId);
 
@@ -195,7 +204,7 @@ bot.on('text', async (ctx) => {
         ...requestData,
         step: 'delivery_method',
         delivery_method: text === 'С доставкой и установкой' ? 'delivery' : 'pickup',
-        phone: userId.toString(),
+        tg_user_id: userId.toString(),
       });
 
       const result = requestSteps.get(userId);
@@ -207,10 +216,7 @@ bot.on('text', async (ctx) => {
 
         if (typeof request === 'string') {
           await ctx.reply(`❌ Произошла ошибка при создании заявки`, Markup.removeKeyboard());
-          setTimeout(async () => {
-            const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());
-            await pinMessage(ctx, message_id);
-          }, 1000);
+          showStart(ctx);
           return;
         }
 
@@ -222,18 +228,14 @@ bot.on('text', async (ctx) => {
           Markup.removeKeyboard(),
         );
 
-        setTimeout(async () => {
-          const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());
-          await pinMessage(ctx, message_id);
-        }, 1000);
+        showStart(ctx);
 
         const messageText = `*Новая заявка #${request.id}*
 Марка авто: ${request.car_brand}
 Модель авто: ${request.car_model}
 Тип двигателя: ${getEngineText(request.engine_type)}
 Год выпуска: ${request.production_year}
-Способ получения: ${getDeliveryText(request.delivery_method)}
-Телефон: ${request.phone}
+Способ получения: ${getDeliveryText(request.delivery_method)}${request.phone ? `\nТелефон: ${request.phone}` : ''}
 Откуда: ${getSource(request.source)}`;
 
         notifyAdmins(messageText);
@@ -246,5 +248,92 @@ bot.on('text', async (ctx) => {
     }
 
     return;
+  }
+
+  if (userState === 'select_battery') {
+    const userStep = batterySelectSteps.get(userId);
+    const text = message.text;
+
+    const batterySelectData = batterySelectSteps.get(userId);
+
+    if (userStep?.step === 'confirm') {
+      if (text === 'Нет') {
+        textState.delete(userId);
+        batterySelectSteps.delete(userId);
+        return;
+      }
+
+      batterySelectSteps.set(userId, {
+        ...batterySelectData,
+        step: 'phone',
+      });
+
+      await ctx.reply('Поделитесь номером телефона для связи', {
+        reply_markup: {
+          keyboard: [
+            [
+              {
+                text: '📱 Поделится номером телефона',
+                request_contact: true,
+              },
+            ],
+          ],
+          one_time_keyboard: true,
+          resize_keyboard: true,
+        },
+      });
+      return;
+    }
+
+    if (userStep?.step === 'address') {
+      selectBatteryLastStep(ctx, text);
+    }
+
+    return;
+  }
+
+  if (message.reply_to_message && 'caption' in message.reply_to_message) {
+    const replied = message.reply_to_message;
+    const batterySelectData = batterySelectSteps.get(userId);
+
+    if (!replied.caption?.includes('Заявка #')) {
+      return await ctx.reply('Это не предложенный Яном аккумулятор');
+    }
+
+    const match = replied.caption.match(/#(\d+)/);
+    const requestId = match ? Number(match[1]) : null;
+
+    const { data, error } = await supabase
+      .from('battery_requests')
+      .select('*')
+      .eq('id', requestId)
+      .single<Request>();
+
+    if (error) {
+      return await ctx.reply('Произошла ошибка, попробуйте ещё раз');
+    }
+
+    if (data?.status === 'completed' || data?.status === 'cancelled') {
+      return await ctx.reply('Заявка была завершена или отменена');
+    }
+    if (data?.address) {
+      return await ctx.reply('Вы уже выбрали аккумулятор');
+    }
+
+    textState.set(userId, 'select_battery');
+    batterySelectSteps.set(userId, {
+      ...batterySelectData,
+      step: 'confirm',
+      battery: replied.caption,
+      id: requestId!,
+      delivery_method: data.delivery_method,
+    });
+
+    await ctx.reply(
+      `Вы выбрали\n\n${replied.caption}\n\nПодтверждаете свой выбор?`,
+      Markup.keyboard([['Да'], ['Нет']])
+        .oneTime()
+        .resize(),
+    );
   }
 });

@@ -2,7 +2,7 @@ import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { akbReplies, contactReplies } from '../text';
 import { editMessageText, goBackMenu, pinMessage } from '../lib';
-import { mainMenu } from './start';
+import { mainMenu } from '../buttons';
 
 bot.command('menu', async (ctx) => {
   const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());

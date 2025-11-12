@@ -31,7 +31,9 @@ export type RequestData = {
   engine_type: 'petrol' | 'diesel';
   production_year: number;
   delivery_method: 'delivery' | 'pickup';
-  phone: string;
+  phone: string | null;
+  tg_user_id: string | null;
+  address: string | null;
 };
 
 export type Request = {
@@ -40,4 +42,4 @@ export type Request = {
   status: 'new' | 'in_progress' | 'completed' | 'cancelled';
   source: 'website' | 'tg';
   created_at: string;
-} & RequestData
+} & RequestData;
