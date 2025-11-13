@@ -17,13 +17,11 @@ pnpm i
 Создайте и заполните файл `.env`:
 
 ```env
+SUPABASE_URL=https://...
+SUPABASE_KEY=123abc...
 BOT_TOKEN=token
-PG_USER=postgres
-PG_HOST=postgres
-PG_DATABASE=database
-PG_PASSWORD=1234567890
-PG_PORT=5432
 ADMIN_IDS=123,456,789
+API_URL=https://...
 ```
 
 ## Скрипты для работы с проектом
@@ -46,14 +44,11 @@ ADMIN_IDS=123,456,789
 │   ├── lib/               # Утилитные функции
 │   ├── middlewares/       # Middleware для обработки запросов
 │   └── index.ts           # Главный файл для запуска приложения
-├── .dockerignore          # Исключения для Docker
 ├── .env.example           # Пример файла с переменными окружения
 ├── .gitignore             # Исключения для Git
 ├── .prettierrc            # Конфигурация для форматирования кода Prettier
 ├── build.ts               # Скрипт сборки проекта
 ├── commitlint.config.ts   # Конфигурация для линтинга сообщений коммитов
-├── docker-compose.yml     # Конфигурация для Docker Compose
-├── Dockerfile             # Инструкции для сборки Docker-образа
 ├── eslint.config.mjs      # Конфигурация ESLint
 ├── init.sql               # SQL-скрипты для инициализации базы данных
 ├── nodemon.json           # Конфигурация для автоматической перезагрузки сервера
@@ -70,7 +65,7 @@ ADMIN_IDS=123,456,789
 - **Node.js** — среда выполнения JavaScript/TypeScript
 - **TypeScript** — язык программирования с поддержкой статической типизации
 - **Telegraf** — фреймворк для создания Telegram-ботов
-- **pg** — клиент для взаимодействия с PostgreSQL
+- **supabase** — база данных
 - **cron** — планировщик периодических задач
 - **esbuild** — высокоскоростной сборщик и минификатор кода
 - **dotenv** — загрузка переменных окружения из `.env` файлов
