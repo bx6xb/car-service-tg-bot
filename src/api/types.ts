@@ -61,6 +61,7 @@ export type Product = {
   popular: number;
   standardPrice: number;
   maintenanceSaving: number;
+  admin_picked: boolean;
   created_at: string;
   updated_at: string;
 };
