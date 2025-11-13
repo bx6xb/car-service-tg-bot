@@ -4,3 +4,4 @@ export * from './broadcast';
 export * from './warranty';
 export * from './messages';
 export * from './request';
+export * from './products';

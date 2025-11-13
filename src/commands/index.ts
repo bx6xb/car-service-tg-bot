@@ -10,3 +10,4 @@ export * from './users';
 export * from './contact';
 // './message' must be last for correct work
 export * from './message';
+export * from './callbackQuery';

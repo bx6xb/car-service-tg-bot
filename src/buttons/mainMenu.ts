@@ -1,4 +1,5 @@
-import { Markup } from "telegraf";
+import { Markup } from 'telegraf';
+import { Warranty } from '../api';
 
 export const mainMenu = () =>
   Markup.inlineKeyboard([
@@ -12,4 +13,16 @@ export const mainMenu = () =>
       Markup.button.callback('🛠 Частые вопросы', 'faq'),
     ],
     [Markup.button.callback('📞 Связаться с нами', 'menu_contact')],
+  ]);
+
+export type WarrantyAction =
+  // 'enable' |
+  'pause' | 'disable';
+
+export const warrantiesMenu = (warranties: Warranty[], action: WarrantyAction) =>
+  Markup.inlineKeyboard([
+    ...warranties.map((w) => [
+      Markup.button.callback(`🔋 ${w.battery_name}`, `warranty-${action}-${w.id}`),
+    ]),
+    [Markup.button.callback('↩️ Назад', 'warranty_toggle')],
   ]);

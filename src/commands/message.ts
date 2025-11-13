@@ -1,5 +1,5 @@
 import { Markup } from 'telegraf';
-import { ADMIN_IDS, bot, supabase } from '../config';
+import { ADMIN_IDS, bot } from '../config';
 import type { Message } from 'telegraf/typings/core/types/typegram';
 import {
   batterySelectSteps,
@@ -17,7 +17,7 @@ import {
   selectBatteryLastStep,
   showStart,
 } from '../lib';
-import { BroadcastApi, Request, RequestApi, RequestData } from '../api';
+import { BroadcastApi, RequestApi, RequestData } from '../api';
 
 bot.on('message', async (ctx) => {
   const message = ctx.message as Message.TextMessage;
@@ -290,50 +290,5 @@ bot.on('message', async (ctx) => {
     }
 
     return;
-  }
-
-  if (message.reply_to_message && 'caption' in message.reply_to_message) {
-    const replied = message.reply_to_message;
-    const batterySelectData = batterySelectSteps.get(userId);
-
-    if (!replied.caption?.includes('Заявка #')) {
-      return await ctx.reply('Это не предложенный Яном аккумулятор');
-    }
-
-    const match = replied.caption.match(/#(\d+)/);
-    const requestId = match ? Number(match[1]) : null;
-
-    const { data, error } = await supabase
-      .from('battery_requests')
-      .select('*')
-      .eq('id', requestId)
-      .single<Request>();
-
-    if (error) {
-      return await ctx.reply('Произошла ошибка, попробуйте ещё раз');
-    }
-
-    if (data?.status === 'completed' || data?.status === 'cancelled') {
-      return await ctx.reply('Заявка была завершена или отменена');
-    }
-    if (data?.address) {
-      return await ctx.reply('Вы уже выбрали аккумулятор');
-    }
-
-    textState.set(userId, 'select_battery');
-    batterySelectSteps.set(userId, {
-      ...batterySelectData,
-      step: 'confirm',
-      battery: replied.caption,
-      id: requestId!,
-      delivery_method: data.delivery_method,
-    });
-
-    await ctx.reply(
-      `Вы выбрали\n\n${replied.caption}\n\nПодтверждаете свой выбор?`,
-      Markup.keyboard([['Да'], ['Нет']])
-        .oneTime()
-        .resize(),
-    );
   }
 });
