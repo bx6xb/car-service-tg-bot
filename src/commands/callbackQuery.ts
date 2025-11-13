@@ -2,7 +2,14 @@ import { Markup } from 'telegraf';
 import { ProductsApi, Request, WarrantyApi } from '../api';
 import { warrantiesMenu, WarrantyAction } from '../buttons';
 import { bot, supabase } from '../config';
-import { editMessageText, escapeMarkdownV2, goBackMenu, logError, msDays } from '../lib';
+import {
+  createImagePath,
+  editMessageText,
+  escapeMarkdownV2,
+  goBackMenu,
+  logError,
+  msDays,
+} from '../lib';
 import { batterySelectSteps, textState } from './state';
 
 bot.on('callback_query', async (ctx) => {
@@ -174,12 +181,12 @@ bot.on('callback_query', async (ctx) => {
       delivery_method: request.delivery_method,
     });
 
-    return await ctx.reply(
-      `Вы выбрали\n\n${batteryText}\n\nПодтверждаете свой выбор?`,
-      Markup.keyboard([['Да'], ['Нет']])
+    return await ctx.sendPhoto(createImagePath(product.image), {
+      caption: `Вы выбрали\n\n${batteryText}\n\nПодтверждаете свой выбор?`,
+      reply_markup: Markup.keyboard([['Да'], ['Нет']])
         .oneTime()
-        .resize(),
-    );
+        .resize().reply_markup,
+    });
   }
 
   return await editMessageText(ctx, '❌ Неверная команда', goBackMenu('menu_main'));

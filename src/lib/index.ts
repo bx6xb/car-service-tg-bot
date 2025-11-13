@@ -11,3 +11,4 @@ export * from './pinMessage';
 export * from './request';
 export * from './selectBatteryLastStep';
 export * from './showStart';
+export * from './createImagePath';
