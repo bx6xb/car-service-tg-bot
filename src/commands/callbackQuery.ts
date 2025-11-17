@@ -10,7 +10,7 @@ import {
   logError,
   msDays,
 } from '../lib';
-import { batterySelectSteps, textState } from './state';
+import { batterySelectSteps, requestSteps, textState } from './state';
 
 bot.on('callback_query', async (ctx) => {
   if (!('data' in ctx.callbackQuery) || !ctx.callbackQuery.data) return;
@@ -136,6 +136,19 @@ bot.on('callback_query', async (ctx) => {
         );
       }
     }
+  }
+
+  if (data === 'skip_engine_volume') {
+    await ctx.answerCbQuery();
+    await ctx.reply('Введите год выпуска', Markup.removeKeyboard());
+
+    const requestData = requestSteps.get(userId);
+    requestSteps.set(userId, {
+      ...requestData,
+      step: 'production_year',
+    });
+
+    return;
   }
 
   if (data.startsWith('select-battery-')) {

@@ -19,7 +19,13 @@ export const broadcastsSteps = new Map<number, Record<string, number>>();
 export const requestSteps = new Map<
   number,
   {
-    step: 'car_brand' | 'car_model' | 'engine_type' | 'production_year' | 'delivery_method';
+    step:
+      | 'car_brand'
+      | 'car_model'
+      | 'engine_type'
+      | 'engine_volume'
+      | 'production_year'
+      | 'delivery_method';
   } & Partial<RequestData>
 >();
 

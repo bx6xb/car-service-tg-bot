@@ -15,7 +15,6 @@ import {
   logError,
   notifyAdmins,
   selectBatteryLastStep,
-  showStart,
 } from '../lib';
 import { BroadcastApi, RequestApi, RequestData } from '../api';
 
@@ -162,10 +161,27 @@ bot.on('message', async (ctx) => {
         return;
       }
 
+      await ctx.reply('Введите объём двигателя (опционально)', {
+        reply_markup: {
+          inline_keyboard: [[{ text: 'Пропустить вопрос', callback_data: 'skip_engine_volume' }]],
+          remove_keyboard: true,
+        },
+      });
+
+      requestSteps.set(userId, {
+        ...requestData,
+        step: 'engine_volume',
+        engine_type: text === 'Бензин' ? 'petrol' : 'diesel',
+      });
+
+      return;
+    }
+
+    if (userStep?.step === 'engine_volume') {
       requestSteps.set(userId, {
         ...requestData,
         step: 'production_year',
-        engine_type: text === 'Бензин' ? 'petrol' : 'diesel',
+        engine_volume: text,
       });
 
       await ctx.reply('Введите год выпуска', Markup.removeKeyboard());
@@ -216,7 +232,6 @@ bot.on('message', async (ctx) => {
 
         if (typeof request === 'string') {
           await ctx.reply(`❌ Произошла ошибка при создании заявки`, Markup.removeKeyboard());
-          showStart(ctx);
           return;
         }
 
@@ -227,8 +242,6 @@ bot.on('message', async (ctx) => {
 Чуть позже в этот чат придут варианты — просто дождитесь сообщения.👀`,
           Markup.removeKeyboard(),
         );
-
-        showStart(ctx);
 
         const messageText = `*Новая заявка #${request.id}*
 Марка авто: ${request.car_brand}

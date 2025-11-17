@@ -29,6 +29,7 @@ export type RequestData = {
   car_brand: string;
   car_model: string;
   engine_type: 'petrol' | 'diesel';
+  engine_volume: string | null;
   production_year: number;
   delivery_method: 'delivery' | 'pickup';
   phone: string | null;

@@ -4,7 +4,6 @@ import { supabase } from '../config';
 import { notifyAdmins } from './notifyAdmins';
 import { escapeMarkdownV2 } from './escapeMarkdownV2';
 import { Request } from '../api';
-import { showStart } from './showStart';
 
 export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
   const userId = ctx.from!.id!;
@@ -54,7 +53,6 @@ export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
 Спасибо, что выбрали *Ампер* ⚡️`),
       { parse_mode: 'MarkdownV2' },
     );
-    showStart(ctx);
     return;
   }
 
@@ -66,5 +64,4 @@ export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
 
 https://yandex.ru/maps/org/akkumulyatorny_tsentr_amper/207765729717?si=8q3wq9uajefgvt1z531f8ey7cw`,
   );
-  showStart(ctx);
 };
