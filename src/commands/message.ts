@@ -281,7 +281,7 @@ bot.on('message', async (ctx) => {
         step: 'phone',
       });
 
-      await ctx.reply('Поделитесь номером телефона для связи', {
+      await ctx.reply('Поделитесь номером телефона для связи или введите вручную начиная с +7', {
         reply_markup: {
           keyboard: [
             [
@@ -296,6 +296,29 @@ bot.on('message', async (ctx) => {
         },
       });
       return;
+    }
+
+    if (userStep?.step === 'phone') {
+      // eslint-disable-next-line no-useless-escape
+      if (!/^[\+]?[0-9\s\-\(\)]{10,}$/.test(text.trim())) {
+        return await ctx.reply('Неправильный формат телефона, введите ещё раз начиная с +7');
+      }
+
+      batterySelectSteps.set(userId, {
+        ...batterySelectData,
+        step: 'address',
+        phone: text,
+      });
+
+      if (batterySelectData?.delivery_method === 'delivery') {
+        await ctx.reply('Введите адрес доставки', {
+          reply_markup: {
+            remove_keyboard: true,
+          },
+        });
+      } else {
+        selectBatteryLastStep(ctx);
+      }
     }
 
     if (userStep?.step === 'address') {
