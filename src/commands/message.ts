@@ -286,7 +286,7 @@ bot.on('message', async (ctx) => {
           keyboard: [
             [
               {
-                text: '📱 Поделится номером телефона',
+                text: '📱 Поделиться номером телефона',
                 request_contact: true,
               },
             ],

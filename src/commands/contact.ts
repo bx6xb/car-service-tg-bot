@@ -1,4 +1,3 @@
-import { Markup } from 'telegraf';
 import { bot } from '../config';
 import { batterySelectSteps, textState } from './state';
 import { selectBatteryLastStep } from '../lib';
@@ -21,7 +20,11 @@ bot.on('contact', async (ctx) => {
     });
 
     if (batterySelectData?.delivery_method === 'delivery') {
-      await ctx.reply('Введите адрес доставки', Markup.removeKeyboard());
+      await ctx.reply('Введите адрес доставки', {
+        reply_markup: {
+          remove_keyboard: true,
+        },
+      });
     } else {
       selectBatteryLastStep(ctx);
     }

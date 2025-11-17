@@ -36,7 +36,11 @@ export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
   batterySelectSteps.delete(userId);
 
   if (error) {
-    return await ctx.reply('Произошла ошибка при обновлении заявки, попробуйте ещё раз');
+    return await ctx.reply('Произошла ошибка при обновлении заявки, попробуйте ещё раз', {
+      reply_markup: {
+        remove_keyboard: true,
+      },
+    });
   }
 
   notifyAdmins(`Клиент указал данные для заявки #${requestData?.id}`);
@@ -51,7 +55,12 @@ export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
 ☎️ Если нужно уточнить детали — звоните: *8\\-989\\-722\\-80\\-95*
 
 Спасибо, что выбрали *Ампер* ⚡️`),
-      { parse_mode: 'MarkdownV2' },
+      {
+        parse_mode: 'MarkdownV2',
+        reply_markup: {
+          remove_keyboard: true,
+        },
+      },
     );
     return;
   }
@@ -63,5 +72,10 @@ export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
 Мы работаем с 8:30 до 18:30, без выходных.
 
 https://yandex.ru/maps/org/akkumulyatorny_tsentr_amper/207765729717?si=8q3wq9uajefgvt1z531f8ey7cw`,
+    {
+      reply_markup: {
+        remove_keyboard: true,
+      },
+    },
   );
 };
