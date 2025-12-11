@@ -9,30 +9,19 @@
     "start": "node dist/bot.js",
     "format": "prettier . --write",
     "dep": "madge --circular ./src",
-    "types": "tsc --noEmit",
-    "lint": "eslint . --ext .ts,.js",
-    "commitlint": "commitlint --edit",
-    "prepare": "husky"
+    "types": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@eslint/js": "^9.27.0",
     "@types/node": "^22.15.21",
     "esbuild": "^0.25.4",
-    "eslint": "^9.27.0",
-    "globals": "^16.1.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.0.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.1"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -40,8 +29,5 @@
     "dotenv": "^16.5.0",
     "node-cron": "^4.2.1",
     "telegraf": "^4.16.3"
-  },
-  "lint-staged": {
-    "*.{js,ts}": "eslint"
   }
 }
