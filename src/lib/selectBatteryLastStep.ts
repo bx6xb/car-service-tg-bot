@@ -1,9 +1,8 @@
 import { Context } from 'telegraf';
 import { batterySelectSteps, textState } from '../commands/state';
-import { supabase } from '../config';
 import { notifyAdmins } from './notifyAdmins';
 import { escapeMarkdownV2 } from './escapeMarkdownV2';
-import { Request } from '../api';
+import { BatteryRequestService } from '../services/BatteryRequestService';
 
 export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
   const userId = ctx.from!.id!;
@@ -12,30 +11,22 @@ export const selectBatteryLastStep = async (ctx: Context, address?: string) => {
   batterySelectSteps.set(userId, {
     ...batterySelectData,
     step: 'address',
-    ...(address && {
-      address,
-    }),
+    ...(address && { address }),
   });
 
   const requestData = batterySelectSteps.get(userId);
 
-  const { data, error } = await supabase
-    .from('battery_requests')
-    .update({
-      phone: requestData?.phone,
-      selected_battery: requestData?.battery?.split('\n\n').slice(0, 2).join('\n\n'),
-      ...(requestData?.address && {
-        address: requestData?.address,
-      }),
-    })
-    .eq('id', requestData?.id)
-    .select()
-    .single<Request>();
+  const { data, error } = await BatteryRequestService.complete(
+    requestData!.id!,
+    requestData!.phone!,
+    requestData!.battery!,
+    requestData?.address,
+  );
 
   textState.delete(userId);
   batterySelectSteps.delete(userId);
 
-  if (error) {
+  if (error || !data) {
     return await ctx.reply('Произошла ошибка при обновлении заявки, попробуйте ещё раз', {
       reply_markup: {
         remove_keyboard: true,

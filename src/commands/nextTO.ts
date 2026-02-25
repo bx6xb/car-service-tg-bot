@@ -1,28 +1,21 @@
-import { WarrantyApi } from '../api';
 import { bot } from '../config';
-import { editMessageText, formatDate, goBackMenu, msDays } from '../lib';
+import { editMessageText, formatDate, goBackMenu } from '../lib';
+import { WarrantyService } from '../services';
 
 bot.action('warranty_next_to', async (ctx) => {
   await ctx.answerCbQuery();
   const userId = ctx.from.id;
-  const warranties = await WarrantyApi.getUserWarranties(userId);
+  const warranties = await WarrantyService.getByUser(userId);
 
   if (warranties.length === 0)
     return await editMessageText(ctx, 'У вас нет активных гарантий.', goBackMenu('service'));
 
-  const now = Date.now();
+  const nextTODates = WarrantyService.getNextTODates(warranties);
+
   let message = 'Ближайшее ТО по каждому аккумулятору:\n\n';
 
-  for (const w of warranties) {
-    const { battery_name, start_date, duration_months } = w;
-    const endDate = start_date + duration_months * msDays(30);
-
-    if (now > endDate) continue;
-
-    const monthsPassed = Math.floor((now - start_date) / msDays(90));
-    const nextTO = start_date + (monthsPassed + 1) * msDays(90);
-    const date = formatDate(nextTO, false);
-    message += `🔋 ${battery_name} — ${date}\n`;
+  for (const { batteryName, nextTO } of nextTODates) {
+    message += `🔋 ${batteryName} — ${formatDate(nextTO, false)}\n`;
   }
 
   message += '\nБот уведомит вас заранее, чтобы не забыть отметиться.';

@@ -1,6 +1,6 @@
-import { WarrantyApi } from '../api';
 import { bot } from '../config';
-import { escapeMarkdownV2, formatDate, logError, msDays, sendTempMessage } from '../lib';
+import { escapeMarkdownV2, formatDate, logError, sendTempMessage } from '../lib';
+import { WarrantyService } from '../services';
 
 bot.command('w', async (ctx) => {
   const args = ctx.message.text.split(' ').slice(1);
@@ -32,18 +32,18 @@ bot.command('w', async (ctx) => {
   const userId = ctx.from.id;
 
   try {
-    const startDate = new Date().setHours(0, 0, 0, 0);
-    const formattedStartDate = formatDate(startDate, false);
-    const nextServiceDate = formatDate(startDate + msDays(90), false);
-
-    await WarrantyApi.createWarranty({ userId, batteryName, duration, startDate });
+    const { startDate, nextServiceDate } = await WarrantyService.create(
+      userId,
+      batteryName,
+      duration,
+    );
 
     const text = `✅ *Гарантия успешно создана!*
 
 🔋 Аккумулятор: *«${batteryName}»*
-📅 Дата покупки: *${formattedStartDate}*
+📅 Дата покупки: *${formatDate(startDate, false)}*
 ⏰ Срок гарантии: *${duration}*
-🔧 Ближайшее ТО: *${nextServiceDate}*
+🔧 Ближайшее ТО: *${formatDate(nextServiceDate, false)}*
 
 Мы пришлем вам уведомление:
 ⏰ За *20 дней* и за *10 дней* до ТО,
@@ -54,11 +54,7 @@ bot.command('w', async (ctx) => {
     await ctx.reply(escapeMarkdownV2(text), { parse_mode: 'MarkdownV2' });
   } catch (e) {
     sendTempMessage({ ctx, text: '❌ Не удалось создать гарантию' });
-    logError(e, 'Failed to create warranty', {
-      userId,
-      batteryName,
-      duration,
-    });
+    logError(e, 'Failed to create warranty', { userId, batteryName, duration });
   }
 
   sendTempMessage({ ctx, ms: 4000 });

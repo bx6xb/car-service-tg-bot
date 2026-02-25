@@ -1,7 +1,7 @@
-import { UserApi } from '../api';
 import { bot } from '../config';
 import { logError, notifyAdmins, pinMessage } from '../lib';
 import { mainMenu } from '../buttons';
+import { UserService } from '../services';
 
 bot.start(async (ctx) => {
   const { message_id } = await ctx.reply('📋 Главное меню:', mainMenu());
@@ -10,7 +10,7 @@ bot.start(async (ctx) => {
 
   try {
     await pinMessage(ctx, message_id);
-    await UserApi.addUser(id, username);
+    await UserService.register(id, username);
   } catch (e) {
     logError(e, 'Failed to add user');
     notifyAdmins(

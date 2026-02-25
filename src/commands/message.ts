@@ -8,15 +8,9 @@ import {
   requestSteps,
   textState,
 } from './state';
-import {
-  getDeliveryText,
-  getEngineText,
-  getSource,
-  logError,
-  notifyAdmins,
-  selectBatteryLastStep,
-} from '../lib';
-import { BroadcastApi, RequestApi, RequestData } from '../api';
+import { logError, notifyAdmins, selectBatteryLastStep } from '../lib';
+import { RequestData } from '../api';
+import { BatteryRequestService, BroadcastService } from '../services';
 
 bot.on('message', async (ctx) => {
   const message = ctx.message as Message.TextMessage;
@@ -40,8 +34,7 @@ bot.on('message', async (ctx) => {
     }
 
     if (userStep?.step === 'date') {
-      const match = text.match(/^(\d{1,2})\.(\d{1,2}).(\d{4})$/);
-      if (!match) {
+      if (!BroadcastService.validateDate(text)) {
         await ctx.reply('❌ Введите корректную дату в формате ДД.ММ.ГГГГ');
         return;
       }
@@ -72,14 +65,8 @@ bot.on('message', async (ctx) => {
       const date = userStep.date;
       if (!date || !userStep.messageText) return;
 
-      const [day, month, year] = date.split('.');
-      const UTCHours = text === '09:00' ? '06' : '14';
-
-      const isoString = `${year}-${month}-${day}T${UTCHours}:00:00`;
-      const timestamp = new Date(isoString).getTime();
-
       try {
-        await BroadcastApi.createBroadcast(userStep.messageText, timestamp);
+        await BroadcastService.create(userStep.messageText, date, text as '09:00' | '17:00');
       } catch (e) {
         logError(e, 'Failed to add new broadcast');
         return await ctx.reply('❌ Произошла ошибка при создании рассылки');
@@ -111,7 +98,7 @@ bot.on('message', async (ctx) => {
     }
 
     try {
-      await BroadcastApi.removeBroadcast(broadcasts[broadcastNumber]);
+      await BroadcastService.remove(broadcasts[broadcastNumber]);
 
       textState.delete(userId);
       broadcastsSteps.delete(userId);
@@ -228,7 +215,7 @@ bot.on('message', async (ctx) => {
       if (result) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { step, ...data } = result;
-        const request = await RequestApi.createRequest(data as RequestData);
+        const request = await BatteryRequestService.create(data as RequestData);
 
         if (typeof request === 'string') {
           await ctx.reply(`❌ Произошла ошибка при создании заявки`, Markup.removeKeyboard());
@@ -243,15 +230,7 @@ bot.on('message', async (ctx) => {
           Markup.removeKeyboard(),
         );
 
-        const messageText = `*Новая заявка #${request.id}*
-Марка авто: ${request.car_brand}
-Модель авто: ${request.car_model}
-Тип двигателя: ${getEngineText(request.engine_type)}
-Год выпуска: ${request.production_year}
-Способ получения: ${getDeliveryText(request.delivery_method)}${request.phone ? `\nТелефон: ${request.phone}` : ''}
-Откуда: ${getSource(request.source)}`;
-
-        notifyAdmins(messageText);
+        notifyAdmins(BatteryRequestService.buildNotificationText(request));
       }
 
       textState.delete(userId);

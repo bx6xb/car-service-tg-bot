@@ -1,11 +1,11 @@
-import { UserApi } from '../api';
 import { bot } from '../config';
 import { logError } from '../lib';
 import { adminMiddleware } from '../middlewares';
+import { UserService } from '../services';
 
 bot.command('u', adminMiddleware, async (ctx) => {
   try {
-    const users = await UserApi.fetchUsers();
+    const users = await UserService.getAll();
     const { message_id } = await ctx.reply(`👤 ${users.length}`);
 
     setTimeout(() => {

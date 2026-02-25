@@ -1,12 +1,12 @@
-import { BroadcastApi } from '../api';
 import { bot } from '../config';
 import { formatDate, logError, sendTempMessage } from '../lib';
 import { adminMiddleware } from '../middlewares';
 import { broadcastsSteps, textState } from './state';
+import { BroadcastService } from '../services';
 
 bot.command('b', adminMiddleware, async (ctx) => {
   try {
-    const broadcasts = await BroadcastApi.getBroadcasts();
+    const broadcasts = await BroadcastService.getAll();
 
     if (broadcasts.length === 0) {
       sendTempMessage({

@@ -1,16 +1,16 @@
 import { Markup } from 'telegraf';
-import { ProductsApi, Request, WarrantyApi } from '../api';
+import { ProductsApi } from '../api';
 import { warrantiesMenu, WarrantyAction } from '../buttons';
-import { bot, supabase } from '../config';
+import { bot } from '../config';
 import {
   createImagePath,
   editMessageText,
   escapeMarkdownV2,
   goBackMenu,
   logError,
-  msDays,
 } from '../lib';
 import { batterySelectSteps, requestSteps, textState } from './state';
+import { BatteryRequestService, WarrantyService } from '../services';
 
 bot.on('callback_query', async (ctx) => {
   if (!('data' in ctx.callbackQuery) || !ctx.callbackQuery.data) return;
@@ -24,7 +24,7 @@ bot.on('callback_query', async (ctx) => {
     await editMessageText(ctx, '⏳ Загружаем гарантии...');
 
     try {
-      const warranties = await WarrantyApi.getUserWarranties(userId);
+      const warranties = await WarrantyService.getByUser(userId);
 
       if (warranties.length === 0) {
         return await editMessageText(
@@ -78,24 +78,15 @@ bot.on('callback_query', async (ctx) => {
     //     }
 
     if (action === 'pause') {
-      const date = await WarrantyApi.getUserStartDate(warrantyId, userId);
-
-      if (!date)
-        return await editMessageText(ctx, '❌ Гарантия не найдена', goBackMenu('warranty_toggle'));
-
-      const startDate = date.start_date;
-      const now = Date.now();
-
-      const MS_IN_90_DAYS = msDays(90);
-
-      // Считаем, сколько 90-дневных интервалов прошло
-      const intervalsPassed = Math.floor((now - startDate) / MS_IN_90_DAYS);
-
-      // Следующая дата ТО
-      const nextTODate = startDate + (intervalsPassed + 1) * MS_IN_90_DAYS;
-
       try {
-        await WarrantyApi.pauseWarranty(nextTODate, warrantyId, userId);
+        const result = await WarrantyService.pause(warrantyId, userId);
+
+        if (!result)
+          return await editMessageText(
+            ctx,
+            '❌ Гарантия не найдена',
+            goBackMenu('warranty_toggle'),
+          );
 
         const text = `🔕 *Уведомления отключены до следующего ТО*
 Напоминания приостановлены, для выбранного АКБ
@@ -117,7 +108,7 @@ bot.on('callback_query', async (ctx) => {
 
     if (action === 'disable') {
       try {
-        await WarrantyApi.removeWarranty(warrantyId);
+        await WarrantyService.disable(warrantyId);
 
         const text = `🚫 *Уведомления отключены навсегда*
 Напоминания по этому аккумулятору отключены.
@@ -155,21 +146,16 @@ bot.on('callback_query', async (ctx) => {
     const requestId = +data.split('-')[2];
     const batteryId = +data.split('-')[3];
 
-    const { data: request, error } = await supabase
-      .from('battery_requests')
-      .select('*')
-      .eq('id', requestId)
-      .single<Request>();
-
+    const { data: request, error } = await BatteryRequestService.getById(requestId);
     const product = await ProductsApi.getProductById(batteryId);
 
-    if (error) {
+    if (error || !request) {
       return await ctx.reply('Произошла ошибка, попробуйте ещё раз');
     }
-    if (request?.status === 'completed' || request?.status === 'cancelled') {
+    if (request.status === 'completed' || request.status === 'cancelled') {
       return await ctx.reply('Заявка была завершена или отменена');
     }
-    if (request?.address) {
+    if (request.address) {
       return await ctx.reply('Вы уже выбрали аккумулятор для этой заявки');
     }
 
