@@ -18,9 +18,9 @@ export type Warranty = {
   notifications_paused_until: number | null;
 };
 
-export type Message = {
+export type BotMessage = {
   id: number;
-  message_id: number;
+  message_id: string;
   chat_id: number;
   created_at: number;
 };
@@ -42,7 +42,7 @@ export type Request = {
   id: number;
   description: string;
   status: 'new' | 'in_progress' | 'completed' | 'cancelled';
-  source: 'website' | 'tg';
+  source: 'website' | 'tg' | 'max';
   created_at: string;
 } & RequestData;
 

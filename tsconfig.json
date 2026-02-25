@@ -9,5 +9,5 @@
     "resolveJsonModule": true,
     "skipLibCheck": true
   },
-  "include": ["src", "./build.ts", "./commitlint.config.ts"]
+  "include": ["src", "src-max", "./build.ts", "./commitlint.config.ts"]
 }

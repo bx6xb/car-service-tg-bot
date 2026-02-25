@@ -5,8 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
+    "dev:max": "nodemon --watch src-max --ext ts --exec ts-node ./src-max/index.ts",
     "build": "ts-node build.ts",
+    "build:tg": "ts-node build.ts tg",
+    "build:max": "ts-node build.ts max",
     "start": "node dist/bot.js",
+    "start:max": "node dist/max-bot.js",
     "format": "prettier . --write",
     "dep": "madge --circular ./src",
     "types": "tsc --noEmit"
@@ -24,6 +28,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@maxhub/max-bot-api": "^0.2.2",
     "@supabase/ssr": "^0.7.0",
     "axios": "^1.13.2",
     "dotenv": "^16.5.0",
