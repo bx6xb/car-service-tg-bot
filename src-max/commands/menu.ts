@@ -57,7 +57,12 @@ bot.action('menu_contact', async (ctx) => {
     Keyboard.inlineKeyboard([
       [Keyboard.button.callback('📍 Адрес магазина', 'contact_address')],
       [Keyboard.button.callback('📞 Позвонить', 'contact_call')],
-      [Keyboard.button.callback('💬 Написать менеджеру', 'contact_chat')],
+      [
+        Keyboard.button.link(
+          '💬 Написать менеджеру',
+          'https://max.ru/u/f9LHodD0cOKLHCZk18AOZM_hjxRDNYrC1znqcZaQSSMzyual6x-Nmw6t86g',
+        ),
+      ],
       [Keyboard.button.callback('↩️ Назад', 'menu_main')],
     ]),
   );
@@ -119,7 +124,7 @@ bot.action('promotions', async (ctx) => {
 — Экологично  
 — Удобно  
 
-📌 Подробнее — <a href="https://t.me/yanamper">связаться с админом</a>`,
+📌 Подробнее — <a href="https://max.ru/u/f9LHodD0cOKLHCZk18AOZM_hjxRDNYrC1znqcZaQSSMzyual6x-Nmw6t86g">связаться с админом</a>`,
     goBackMenu('menu_main'),
   );
 });

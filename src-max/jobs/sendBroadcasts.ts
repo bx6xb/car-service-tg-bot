@@ -25,6 +25,7 @@ export const sendBroadcasts = async () => {
       try {
         const message = await bot.api.sendMessageToUser(id, b.message, {
           notify: false,
+          format: 'html',
         });
 
         mid = message.body.mid;

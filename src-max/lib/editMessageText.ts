@@ -13,6 +13,7 @@ export const editMessageText = async (
     await ctx.editMessage({
       text,
       attachments: keyboard ? [keyboard] : [],
+      format: 'html',
     });
   } catch (e) {
     logError(e, 'editMessageText error');
