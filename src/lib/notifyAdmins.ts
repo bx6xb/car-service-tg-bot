@@ -1,16 +1,14 @@
-import { ADMIN_IDS, bot } from '../config';
-import { escapeMarkdownV2 } from './escapeMarkdownV2';
+import { Bot } from '@maxhub/max-bot-api';
+import { MAX_ADMIN_IDS, MAX_BOT_TOKEN } from '../config';
+
+const maxBot = new Bot(MAX_BOT_TOKEN as string);
 
 export const notifyAdmins = (text: string): void => {
-  for (const admin of ADMIN_IDS) {
-    bot.telegram
-      .sendMessage(admin, escapeMarkdownV2(text), { parse_mode: 'MarkdownV2' })
+  const fullText = `📨 <b>[Telegram Bot]</b>\n${text}`;
+  for (const admin of MAX_ADMIN_IDS) {
+    maxBot.api
+      .sendMessageToUser(admin, fullText, { format: 'html' })
       .catch((err) => {
-        if (err.code === 403 || err.description?.includes('bot was blocked')) {
-          console.warn(`❗ Админ ${admin} заблокировал бота`);
-          return;
-        }
-
         console.error(`Ошибка при отправке админу ${admin}:`, err);
       });
   }
