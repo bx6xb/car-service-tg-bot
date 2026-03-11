@@ -44,6 +44,7 @@ export class BatteryRequestService {
 Тип двигателя: ${getEngineText(request.engine_type)}
 Год выпуска: ${request.production_year}
 Способ получения: ${getDeliveryText(request.delivery_method)}${request.phone ? `\nТелефон: ${request.phone}` : ''}
-Откуда: ${getSource(request.source)}`;
+Откуда: ${getSource(request.source)}
+https://ampercenter.ru/admin`;
   }
 }

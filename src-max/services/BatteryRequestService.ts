@@ -38,6 +38,6 @@ export class BatteryRequestService {
   }
 
   static buildNotificationText(request: Request): string {
-    return `<b>Новая заявка #${request.id}</b>\nМарка авто: ${request.car_brand}\nМодель авто: ${request.car_model}\nТип двигателя: ${getEngineText(request.engine_type)}\nГод выпуска: ${request.production_year}\nСпособ получения: ${getDeliveryText(request.delivery_method)}${request.phone ? `\nТелефон: ${request.phone}` : ''}\nОткуда: ${getSource(request.source)}`;
+    return `<b>Новая заявка #${request.id}</b>\nМарка авто: ${request.car_brand}\nМодель авто: ${request.car_model}\nТип двигателя: ${getEngineText(request.engine_type)}\nГод выпуска: ${request.production_year}\nСпособ получения: ${getDeliveryText(request.delivery_method)}${request.phone ? `\nТелефон: ${request.phone}` : ''}\nОткуда: ${getSource(request.source)}\nhttps://ampercenter.ru/admin`;
   }
 }
