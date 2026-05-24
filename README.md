@@ -21,7 +21,7 @@
 ## Установка
 
 ```bash
-git clone https://github.com/bx6xb/car-service-tg-bot
+git clone https://github.com/yan-amper/car-service-tg-bot.git
 cd car-service-tg-bot
 pnpm i
 ```
