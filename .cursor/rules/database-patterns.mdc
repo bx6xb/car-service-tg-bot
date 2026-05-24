@@ -1,0 +1,47 @@
+---
+description: Supabase and API patterns for this project
+globs: src/**/*.ts
+alwaysApply: false
+---
+
+# Database & API Patterns
+
+## Supabase clients
+
+- `src/config/supabase.ts` — single client, exported as `supabase`
+- `src-max/config/supabase.ts` — two clients: `supabase` (Max DB) + `tgSupabase` (TG DB for battery_requests)
+
+## Tables
+
+| Table | Key columns |
+|-------|-------------|
+| `users` | `user_id`, `username` |
+| `warranty_reminders` | `user_id`, `battery_name`, `start_date`, `duration`, `next_service_date`, `paused` |
+| `broadcasts` | `id`, `text`, `date`, `time`, `sent` |
+| `bot_messages` | `message_id`, `chat_id`, `broadcast_id` |
+| `battery_requests` | `id`, `user_id`, `brand`, `model`, `engine`, `year`, `delivery`, `phone`, `status`, `source` |
+
+## Battery requests source
+
+Always set `source` field when creating a battery request:
+- `'tg'` — from Telegram bot
+- `'max'` — from Max bot (written to TG Supabase via `tgSupabase`)
+- `'website'` — from website
+
+## API calls
+
+Product data comes from `GET ${API_URL}/api/products?id=`. Images served from `${API_URL}/storage/app/public/{image}`.
+
+All axios calls go through `src/config/api.ts` (axios instance with `baseURL`).
+
+## All DB calls in services/
+
+Never call `supabase` directly from commands or lib. Always use a `Service` method:
+
+```typescript
+// ✅ GOOD
+const reminders = await WarrantyService.getReminders();
+
+// ❌ BAD — DB query in command handler
+const { data } = await supabase.from('warranty_reminders').select('*');
+```

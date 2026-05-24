@@ -1,0 +1,36 @@
+---
+description: Core project context — dual-bot architecture for car battery service center
+alwaysApply: true
+---
+
+# Project: Car Service Bot — «Ампер» (Taganrog)
+
+Two bots, one codebase:
+- **`src/`** — Telegram bot (Telegraf 4.x)
+- **`src-max/`** — Max messenger bot (@maxhub/max-bot-api)
+
+Both bots share the same folder structure: `api/`, `buttons/`, `commands/`, `config/`, `jobs/`, `lib/`, `middlewares/`, `services/`, `text/`.
+
+## Business logic
+
+- Warranty ТО reminders: 90-day cycles, alerts at 20 and 10 days before next service
+- Battery selection wizard (Max only; TG redirects to Max bot + website)
+- Admin broadcasts scheduled for 09:00 or 17:00 MSK
+- Admin commands: `/w` (warranty), `/nb` (new broadcast), `/b` (list broadcasts), `/u` (user count)
+
+## Supabase
+
+- Telegram bot uses `SUPABASE_*` env vars
+- Max bot uses `MAX_SUPABASE_*` + also writes battery requests to TG Supabase (`SUPABASE_*`) with `source: 'max'`
+
+## Cron
+
+Two daily runs: `0 6 * * *` and `0 14 * * *` — cleanup old broadcast messages, send broadcasts, send warranty reminders.
+
+## Admin notifications
+
+TG bot sends errors/alerts to Max admins (`MAX_ADMIN_IDS`) via Max API. Max bot notifies its own Max admins.
+
+## Key rule
+
+When editing `src/` logic, check if `src-max/` needs the same change and vice versa. They are mirrors with different framework APIs.

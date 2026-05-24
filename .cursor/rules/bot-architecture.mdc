@@ -1,0 +1,56 @@
+---
+description: Bot architecture patterns — commands, callbacks, state, middleware
+alwaysApply: true
+---
+
+# Bot Architecture Patterns
+
+## Command structure
+
+Each command file registers handlers and exports nothing. Side effects only.
+
+```
+commands/
+  start.ts       — onboarding, upsert user
+  menu.ts        — main inline menu + all action handlers
+  createWarranty.ts  — admin /w
+  newBroadcast.ts    — admin /nb
+  broadcasts.ts      — admin /b
+  users.ts           — admin /u
+  batteryRequest.ts  — battery selection (Max) / redirect (TG)
+  message.ts         — state machine for multi-step flows
+  callbackQuery.ts   — callback/action dispatcher
+  state.ts           — shared mutable state object
+```
+
+## State machine (multi-step flows)
+
+User state is stored in `state.ts` (in-memory object keyed by user ID). Commands check `state[userId].step` to route input.
+
+`clearState` middleware resets state when user sends a `/` command.
+
+## Middleware order
+
+1. `clearState` — resets state on new slash command
+2. `admin` — blocks non-admins from admin commands (checks `ADMIN_IDS`)
+3. Command handlers
+
+## Telegram vs Max API differences
+
+| Concern | Telegram (Telegraf) | Max (@maxhub/max-bot-api) |
+|---------|--------------------|-----------------------|
+| Start event | `bot.start` | `bot.on('bot_started')` |
+| Callbacks | `bot.action(regex, ctx)` | `bot.on('message_callback', ctx)` |
+| Message text | `bot.on('message', ctx)` | `bot.on('message_created', ctx)` |
+| Contact | `bot.on('contact', ctx)` | `ctx.contactInfo` in message_created |
+| Parse mode | MarkdownV2 in some places | HTML everywhere |
+| Edit message | `ctx.editMessageText` | Max edit API via `lib/editMessageText` |
+
+## Admin guard
+
+```typescript
+// ✅ GOOD — check before any admin action
+if (!isAdmin(ctx)) return;
+```
+
+Admin IDs come from `ADMIN_IDS` (TG) or `MAX_ADMIN_IDS` (Max), comma-separated strings parsed in `config/variables.ts`.

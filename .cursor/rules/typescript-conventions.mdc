@@ -1,0 +1,53 @@
+---
+description: TypeScript conventions for this project
+globs: **/*.ts
+alwaysApply: false
+---
+
+# TypeScript Conventions
+
+## Imports
+
+Barrel imports only — always import from folder index, not from individual files:
+
+```typescript
+// ✅ GOOD
+import { logError, notifyAdmins } from '../lib';
+import { WarrantyService } from '../services';
+
+// ❌ BAD
+import { logError } from '../lib/logError';
+```
+
+## Error handling
+
+Always log and notify admins on errors:
+
+```typescript
+// ✅ GOOD
+try {
+  await WarrantyService.create(...);
+} catch (err) {
+  logError(err, 'createWarranty');
+  await notifyAdmins(`❌ Ошибка создания гарантии: ${String(err)}`);
+}
+
+// ❌ BAD — silent catch
+try { ... } catch {}
+```
+
+## Env variables
+
+Always import from `config/variables.ts`, never read `process.env` directly in feature code.
+
+## Services
+
+Business logic lives in `services/`. Commands only call services and send replies — no DB queries in command handlers.
+
+## Text content
+
+All user-facing HTML strings go in `text/index.ts`. No inline HTML in commands.
+
+## Strict mode
+
+`strict: true` is enforced. No `any`, no non-null assertions unless genuinely necessary.
