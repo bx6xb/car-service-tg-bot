@@ -1,3 +1,4 @@
+export * from './HealthService';
 export * from './UserService';
 export * from './BroadcastService';
 export * from './WarrantyService';
