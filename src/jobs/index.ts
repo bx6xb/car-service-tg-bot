@@ -6,7 +6,7 @@ import { cleanupOldMessages } from '../lib';
 
 pingSupabase();
 
-cron.schedule('0 4 1,6,11,16,21,26 * *', pingSupabase);
+cron.schedule('0 4 */3 * *', pingSupabase);
 
 cron.schedule('0 6 * * *', () => {
   cleanupOldMessages();
